@@ -1,0 +1,20 @@
+# Node and composer packages
+/node_modules
+/vendor
+
+# Content of image folders
+/images
+/admin/images
+
+# Sensitive information
+/storage/*.key
+.env
+
+# Code editor settings
+/.idea
+/.vscode
+_ide_helper.php
+
+# Logs
+npm-debug.log
+yarn-error.log
