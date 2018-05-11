@@ -16,7 +16,7 @@
             </ul>
         </li>
         <li>
-            <a href="charts.html"><i class="fa fa-fw fa-list"></i> Categories </a>
+            <a href="/admin/categories.php"><i class="fa fa-fw fa-list"></i> Categories </a>
         </li>
         <li>
             <a href="tables.html"><i class="fa fa-fw fa-comments"></i> Comments </a>
