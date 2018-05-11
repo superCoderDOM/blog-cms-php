@@ -1,3 +1,5 @@
+<?php include 'includes/admin_header.php'; ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -9,7 +11,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>SB Admin - Bootstrap Admin Template</title>
+    <title>CMS Admin - Dashboard</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="admin/css/bootstrap.min.css" rel="stylesheet">
@@ -33,13 +35,13 @@
 
     <div id="wrapper">
 
-        <?php include "includes/navigation.php"; ?>
+        <?php include "includes/admin_navigation.php"; ?>
 
         <div id="page-wrapper">
 
             <div class="container-fluid">
 
-                <?php include "includes/adminContent.php"; ?>
+                <?php include "includes/admin_content.php"; ?>
 
             </div>
             <!-- /.container-fluid -->
