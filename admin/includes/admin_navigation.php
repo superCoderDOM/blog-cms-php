@@ -10,6 +10,6 @@
         </button>
         <a class="navbar-brand" href="/admin">CMS Admin</a>
     </div>
-    <?php include 'includes/topMenu.php'; ?>
-    <?php include 'includes/sideMenu.php'; ?>
+    <?php include 'includes/menus/top_menu.php'; ?>
+    <?php include 'includes/menus/side_menu.php'; ?>
 </nav>
