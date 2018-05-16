@@ -14,5 +14,6 @@
     </thead>
     <tbody>
         <?php fetchAllPosts(); ?>
+        <?php deletePost(); ?>
     </tbody>
 </table>
