@@ -76,8 +76,8 @@
             $query .= "WHERE cat_id = '{$cat_id}' ";
     
             $updateCategoryByID = mysqli_query($connection, $query);
-            header("Location: categories.php");  // forces page reload after update
             confirmQuery($updateCategoryByID);
+            header("Location: categories.php");  // forces page reload after update
         }
     }
 
@@ -92,8 +92,8 @@
             $cat_id = $_GET['delete_cat_id'];
             $query = "DELETE FROM categories WHERE cat_id = {$cat_id}";
             $deleteCategoryByID = mysqli_query($connection, $query);
-            header("Location: categories.php");  // forces page reload after deletion
             confirmQuery($deleteCategoryByID);
+            header("Location: categories.php");  // forces page reload after deletion
         }
     }
 
@@ -127,8 +127,8 @@
             $query .= "VALUES('{$post_category_id}', '{$post_title}', '{$post_author}', '{$post_image}', '{$post_content}', '{$post_tags}', '{$post_status}')";
 
             $addPost = mysqli_query($connection, $query);
-            header("Location: posts.php");  // forces page reload after deletion
             confirmQuery($addPost);
+            header("Location: posts.php");  // forces page reload after deletion
         }
     }
 
@@ -154,20 +154,91 @@
             $post_comment_count = $row['post_comment_count'];
             $post_status = $row['post_status'];
 
+            // Fecth title associated with category id
+            $query = "SELECT * FROM categories WHERE cat_id = {$post_category_id}";
+            $selectCategoryByID = mysqli_query($connection, $query);
+        
+            while($row = mysqli_fetch_assoc($selectCategoryByID)) {
+        
+                $post_category_title = $row['cat_title'];
+            }
+
+            // Display results as table row
             echo "<tr>";
                 echo "<td> {$post_id} </td>";
                 echo "<td> {$post_author} </td>";
                 echo "<td> {$post_title} </td>";
-                echo "<td> {$post_category_id} </td>";
+                echo "<td> {$post_category_title} </td>";
                 echo "<td> {$post_status} </td>";
                 echo "<td><img src='../images/{$post_image}' alt='{$post_title}' width='50px'></td>";
                 echo "<td> {$post_tags} </td>";
                 echo "<td> {$post_comment_count} </td>";
                 echo "<td> {$post_date} </td>";
+                echo "<td><a href='posts.php?source=edit_post&edit_post_id={$post_id}'>Edit</a></td>";
                 echo "<td><a href='posts.php?delete_post_id={$post_id}'>Delete</a></td>";
-                echo "<td><a href='posts.php?update_post_id={$post_id}'>Edit</a></td>";
             echo "</tr>";
         }
     }
+
+    // UPDATE existing post in database
+    function updatePost($post_id) {
+
+        global $connection;
+
+        if(isset($_POST['update_post'])) {
+
+            $post_title = $_POST['post_title'];
+            $post_category_id = $_POST['post_category_id'];
+            $post_author = $_POST['post_author'];
+            $post_status = $_POST['post_status'];
+            $post_image = $_FILES['post_image']['name'];
+            $post_image_temp = $_FILES['post_image']['tmp_name'];
+            $post_tags = $_POST['post_tags'];
+            $post_content = $_POST['post_content'];
+
+            move_uploaded_file($post_image_temp, "../images/$post_image");
+
+            if(empty($post_image)) {
+                $query = "SELECT * FROM posts WHERE post_id = {$post_id}";
+                $selectImageByID = mysqli_query($connection, $query);
+
+                while($row = mysqli_fetch_assoc($selectImageByID)) {
+
+                    $post_image = $row['post_image'];
+                }
+            }
+
+            $query = "UPDATE posts SET ";
+            $query .= "post_title = '{$post_title}', ";
+            $query .= "post_category_id = '{$post_category_id}', ";
+            $query .= "post_author = '{$post_author}', ";
+            $query .= "post_status = '{$post_status}', ";
+            $query .= "post_image = '{$post_image}', ";
+            $query .= "post_tags = '{$post_tags}', ";
+            $query .= "post_content = '{$post_content}' ";
+            $query .= "WHERE post_id = '{$post_id}' ";
+
+            $updatePostByID = mysqli_query($connection, $query);
+            confirmQuery($updatePostByID);
+            header("Location: posts.php");  // forces page reload after update
+        }
+    }
+
+    // DELETE post from database
+    function deletePost() {
+
+        global $connection;
+
+        // Delete a category and refresh page
+        if(isset($_GET['delete_post_id'])) {
+
+            $post_id = $_GET['delete_post_id'];
+            $query = "DELETE FROM posts WHERE post_id = {$post_id}";
+            $deletePostByID = mysqli_query($connection, $query);
+            confirmQuery($deletePostByID);
+            header("Location: posts.php");  // forces page reload after deletion
+        }
+    }
+
 
 ?>
