@@ -2,7 +2,7 @@
 <?php
 
     // Fetch all posts with requested category ID
-    $query = "SELECT * FROM posts WHERE post_category_id = '{$cat_id}' ";
+    $query = "SELECT * FROM posts WHERE post_category_id = '{$cat_id}' ORDER BY post_id DESC";
     $selectPostsByCategory = mysqli_query($connection, $query);
 
     if(!$selectPostsByCategory) {
