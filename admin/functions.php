@@ -161,11 +161,38 @@
                     echo "<td> {$comment_content} </td>";
                     echo "<td> {$comment_status} </td>";
                     echo "<td> {$comment_date} </td>";
-                    echo "<td><a href='comments.php?source=approve_comment&edit_comment_id={$comment_id}'>Approve</a></td>";
-                    echo "<td><a href='comments.php?source=reject_comment&edit_comment_id={$comment_id}'>Reject</a></td>";
+                    echo "<td><a href='comments.php?approve_comment_id={$comment_id}'>Approve</a></td>";
+                    echo "<td><a href='comments.php?reject_comment_id={$comment_id}'>Reject</a></td>";
                     echo "<td><a href='comments.php?delete_comment_id={$comment_id}'>Delete</a></td>";
                 echo "</tr>";
             }
+        }
+    }
+
+    function updateCommentStatus() {
+
+        global $connection;
+
+        // Update status and refresh page
+        if(isset($_GET['approve_comment_id']) || isset($_GET['reject_comment_id'])) {
+
+            if(isset($_GET['approve_comment_id'])) {
+
+                $comment_id = $_GET['approve_comment_id'];
+                $comment_status = 'Approved';
+
+            } elseif(isset($_GET['reject_comment_id'])) {
+
+                $comment_id = $_GET['reject_comment_id'];
+                $comment_status = 'Rejected';
+            }
+
+            $query = "UPDATE comments SET comment_status = '{$comment_status}' ";
+            $query .= "WHERE comment_id = '{$comment_id}' ";
+
+            $updateCommentStatusByID = mysqli_query($connection, $query);
+            confirmQuery($updateCommentStatusByID);
+            header("Location: comments.php");  // forces page reload after deletion
         }
     }
 

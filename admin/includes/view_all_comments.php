@@ -15,6 +15,7 @@
     </thead>
     <tbody>
         <?php fetchAllComments(); ?>
+        <?php updateCommentStatus(); ?>
         <?php deleteComment(); ?>
     </tbody>
 </table>
