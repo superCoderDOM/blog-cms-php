@@ -54,13 +54,46 @@
                 <!-- Blog Comments -->
             
                 <!-- Comments Form -->
+
+                <?php 
+                
+                    if(isset($_POST['submit_comment'])) {
+                
+                        $comment_post_id = $post_id;
+                        $comment_author = $_POST['comment_author'];
+                        $comment_email = $_POST['comment_email'];
+                        $comment_content = $_POST['comment_content'];
+                        // $comment_status = 'Submitted';
+                        // $comment_date = date('d-m-y');
+            
+                        $query = "INSERT INTO comments (comment_post_id, comment_author, comment_email, comment_content) ";
+                        $query .= "VALUES ('{$comment_post_id}', '{$comment_author}', '{$comment_email}', '{$comment_content}')";
+            
+                        $addComment = mysqli_query($connection, $query);
+
+                        if(!$addComment) {
+                            die('QUERY FAILED: ' . mysqli_error($connection));
+                        }
+                    }
+
+                ?>
+
                 <div class="well">
                     <h4>Leave a Comment:</h4>
-                    <form role="form">
+                    <form action="" method="post" role="form">
                         <div class="form-group">
-                            <textarea class="form-control" rows="3"></textarea>
+                            <label for="comment_author"> Name </label>
+                            <input type="text" name="comment_author" id="comment_author" class="form-control" placeholder="Enter your name">
                         </div>
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <div class="form-group">
+                            <label for="comment_email"> Email </label>
+                            <input type="email" name="comment_email" id="comment_email" class="form-control" placeholder="Enter your email">
+                        </div>
+                        <div class="form-group">
+                            <label for="comment_content"> Comment </label>
+                            <textarea name="comment_content" id="comment_content" class="form-control" rows="3" placeholder="Enter your comment"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary" name="submit_comment"> Submit </button>
                     </form>
                 </div>
             
