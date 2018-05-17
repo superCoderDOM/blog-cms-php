@@ -7,13 +7,39 @@
 
             ?>
                 <h1 class="page-header">
-                    Search Results
-                    <small>Posts related to <?php echo $_POST['search']; ?></small>
+                    Blog Posts
+                    <small>related to <?php echo $_POST['search']; ?></small>
                 </h1>
             <?php
 
             include 'includes/blog_search_list.php';
 
+        } elseif(isset($_GET['cat_id'])) {
+
+            $cat_id = $_GET['cat_id'];
+            $query = "SELECT * FROM categories WHERE cat_id = '{$cat_id}'";
+            $selectCategoryByID = mysqli_query($connection, $query);
+            if(!$selectCategoryByID) {
+
+                die("QUERY FAILED: " . mysqli_error($connection));
+        
+            } else {
+        
+                while($row = mysqli_fetch_assoc($selectCategoryByID)) {
+
+                    $cat_id = $row['cat_id'];
+                    $cat_title = $row['cat_title'];
+
+                    ?>
+                    <h1 class="page-header">
+                        Blog Posts
+                        <small>related to <?php echo $cat_title; ?></small>
+                    </h1>
+                    <?php
+
+                    include 'includes/blog_category_list.php';
+                }
+            }
         } else {
 
             ?>

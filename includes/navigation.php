@@ -11,7 +11,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="/">Start Bootstrap</a>
+            <a class="navbar-brand" href="/">superCoderDOM</a>
         </div>
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -22,8 +22,9 @@
                     $allCategories = mysqli_query($connection, $query);
 
                     while($row = mysqli_fetch_assoc($allCategories)) {
+                        $cat_id = $row['cat_id'];
                         $cat_title = $row['cat_title'];
-                        echo "<li><a href='#'>{$cat_title}</a></li>";
+                        echo "<li><a href='index.php?cat_id={$cat_id}'>{$cat_title}</a></li>";
                     }
 
                 ?>
