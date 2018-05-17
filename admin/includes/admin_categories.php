@@ -2,7 +2,7 @@
 <div class="row">
     <div class="col-lg-12">
 
-        <h1 class="page-header"> Blog Categories </h1>
+        <h1 class="page-header"> Categories </h1>
 
         <!-- Category Forms -->
         <div class="col-xs-6">
