@@ -4,15 +4,15 @@
     // Fetch all posts with tags like search keyword
     $search =  $_POST['search'];
     $query = "SELECT * FROM posts WHERE post_tags LIKE '%$search%' ";
-    $searchPostsByTags = mysqli_query($connection, $query);
+    $selectPostsByTags = mysqli_query($connection, $query);
 
-    if(!$searchPostsByTags) {
+    if(!$selectPostsByTags) {
 
         die("QUERY FAILED: " . mysqli_error($connection));
 
     } else {
 
-        $count = mysqli_num_rows($searchPostsByTags);
+        $count = mysqli_num_rows($selectPostsByTags);
 
         if($count == 0) {
 
@@ -20,7 +20,7 @@
 
         } else {
 
-            while($row = mysqli_fetch_assoc($searchPostsByTags)) {
+            while($row = mysqli_fetch_assoc($selectPostsByTags)) {
 
                 // Save required fields to variables
                 $post_id = $row['post_id'];
