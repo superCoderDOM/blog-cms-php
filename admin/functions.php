@@ -125,7 +125,7 @@
         }
     }
 
-    // RETRIEVE all categories from database
+    // RETRIEVE all comments from database
     function fetchAllComments() {
 
         global $connection;
