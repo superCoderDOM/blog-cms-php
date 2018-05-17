@@ -12,7 +12,7 @@
                 </h1>
             <?php
 
-            include 'includes/blogSearchList.php';
+            include 'includes/blog_search_list.php';
 
         } else {
 
@@ -23,7 +23,7 @@
                 </h1>
             <?php
 
-            include 'includes/blogList.php';
+            include 'includes/blog_list.php';
 
         }
     ?>
