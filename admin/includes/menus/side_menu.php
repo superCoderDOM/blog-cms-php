@@ -19,7 +19,7 @@
             <a href="/admin/categories.php"><i class="fa fa-fw fa-list"></i> Categories </a>
         </li>
         <li>
-            <a href="tables.html"><i class="fa fa-fw fa-comments"></i> Comments </a>
+            <a href="#"><i class="fa fa-fw fa-comments"></i> Comments </a>
         </li>
         <li>
             <a href="javascript:;" data-toggle="collapse" data-target="#users"><i class="fa fa-fw fa-users"></i> Users <i class="fa fa-fw fa-caret-down"></i></a>
@@ -33,7 +33,7 @@
             </ul>
         </li>
         <li>
-            <a href="index-rtl.html"><i class="fa fa-fw fa-user"></i> Profile </a>
+            <a href="#"><i class="fa fa-fw fa-user"></i> Profile </a>
         </li>
     </ul>
 </div>
