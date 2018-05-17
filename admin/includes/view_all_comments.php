@@ -15,6 +15,6 @@
     </thead>
     <tbody>
         <?php fetchAllComments(); ?>
-        <?php deletePost(); ?>
+        <?php deleteComment(); ?>
     </tbody>
 </table>

@@ -101,6 +101,30 @@
     |           COMMENTS              |
     +--------------------------------*/
 
+
+    // CREATE new comment in database
+    function createComment() {
+
+        global $connection;
+
+        if(isset($_POST['submit_comment'])) {
+            
+            $comment_post_id = $_GET['comment_post_id'];
+            $comment_author = $_POST['comment_author'];
+            $comment_email = $_POST['comment_email'];
+            $comment_content = $_POST['comment_content'];
+            // $comment_status = 'Submitted';
+            // $comment_date = date('d-m-y');
+
+            $query = "INSERT INTO comments(comment_post_id, comment_author, comment_email, comment_content) ";
+            $query .= "VALUES('{$comment_post_id}', '{$comment_author}', '{$comment_email}', '{$comment_content}')";
+
+            $addComment = mysqli_query($connection, $query);
+            confirmQuery($addcomment);
+            header("Location: posts.php?post_id={$comment_post_id}");  // forces page reload after deletion
+        }
+    }
+
     // RETRIEVE all categories from database
     function fetchAllComments() {
 
@@ -131,40 +155,33 @@
                 // Display results as table row
                 echo "<tr>";
                     echo "<td> {$comment_id} </td>";
-                    echo "<td> {$comment_post_title} </td>";
+                    echo "<td><a href='../post.php?post_id={$comment_post_id}'> {$comment_post_title} </a></td>";
                     echo "<td> {$comment_author} </td>";
                     echo "<td> {$comment_email} </td>";
                     echo "<td> {$comment_content} </td>";
                     echo "<td> {$comment_status} </td>";
                     echo "<td> {$comment_date} </td>";
-                    echo "<td><a href='posts.php?source=approve_comment&edit_comment_id={$comment_id}'>Approve</a></td>";
-                    echo "<td><a href='posts.php?source=reject_comment&edit_comment_id={$comment_id}'>Reject</a></td>";
-                    echo "<td><a href='posts.php?delete_comment_id={$comment_id}'>Delete</a></td>";
+                    echo "<td><a href='comments.php?source=approve_comment&edit_comment_id={$comment_id}'>Approve</a></td>";
+                    echo "<td><a href='comments.php?source=reject_comment&edit_comment_id={$comment_id}'>Reject</a></td>";
+                    echo "<td><a href='comments.php?delete_comment_id={$comment_id}'>Delete</a></td>";
                 echo "</tr>";
             }
         }
     }
 
-    // CREATE new comment in database
-    function createComment() {
+    // DELETE post from database
+    function deleteComment() {
 
         global $connection;
 
-        if(isset($_POST['submit_comment'])) {
-            
-            $comment_post_id = $_GET['comment_post_id'];
-            $comment_author = $_POST['comment_author'];
-            $comment_email = $_POST['comment_email'];
-            $comment_content = $_POST['comment_content'];
-            // $comment_status = 'Submitted';
-            // $comment_date = date('d-m-y');
+        // Delete a category and refresh page
+        if(isset($_GET['delete_comment_id'])) {
 
-            $query = "INSERT INTO comments(comment_post_id, comment_author, comment_email, comment_content) ";
-            $query .= "VALUES('{$comment_post_id}', '{$comment_author}', '{$comment_email}', '{$comment_content}')";
-
-            $addComment = mysqli_query($connection, $query);
-            confirmQuery($addcomment);
-            header("Location: posts.php?post_id={$comment_post_id}");  // forces page reload after deletion
+            $comment_id = $_GET['delete_comment_id'];
+            $query = "DELETE FROM comments WHERE comment_id = {$comment_id}";
+            $deleteCommentByID = mysqli_query($connection, $query);
+            confirmQuery($deleteCommentByID);
+            header("Location: comments.php");  // forces page reload after deletion
         }
     }
 
@@ -310,6 +327,5 @@
             header("Location: posts.php");  // forces page reload after deletion
         }
     }
-
 
 ?>
