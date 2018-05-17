@@ -97,6 +97,54 @@
         }
     }
 
+    /*--------------------------------+
+    |           COMMENTS              |
+    +--------------------------------*/
+
+    // RETRIEVE all categories from database
+    function fetchAllComments() {
+
+        global $connection;
+
+        // Find and display all categories
+        $query = "SELECT * FROM comments";
+        $selectAllComments = mysqli_query($connection, $query);
+
+        while($row = mysqli_fetch_assoc($selectAllComments)) {
+
+            $comment_id = $row['comment_id'];
+            $comment_post_id = $row['comment_post_id'];
+            $comment_author = $row['comment_author'];
+            $comment_email = $row['comment_email'];
+            $comment_content = $row['comment_content'];
+            $comment_status = $row['comment_status'];
+            $comment_date = $row['comment_date'];
+
+            // Fecth title associated with category id
+            $query = "SELECT * FROM posts WHERE post_id = {$comment_post_id}";
+            $selectPostByID = mysqli_query($connection, $query);
+        
+            while($row = mysqli_fetch_assoc($selectPostByID)) {
+        
+                $comment_post_title = $row['post_title'];
+
+                // Display results as table row
+                echo "<tr>";
+                    echo "<td> {$comment_id} </td>";
+                    echo "<td> {$comment_post_title} </td>";
+                    echo "<td> {$comment_author} </td>";
+                    echo "<td> {$comment_email} </td>";
+                    echo "<td> {$comment_content} </td>";
+                    echo "<td> {$comment_status} </td>";
+                    echo "<td> {$comment_date} </td>";
+                    echo "<td><a href='posts.php?source=approve_comment&edit_comment_id={$comment_id}'>Approve</a></td>";
+                    echo "<td><a href='posts.php?source=reject_comment&edit_comment_id={$comment_id}'>Reject</a></td>";
+                    echo "<td><a href='posts.php?delete_comment_id={$comment_id}'>Delete</a></td>";
+                echo "</tr>";
+            }
+        }
+    }
+
     /*-----------------------------+
     |           POSTS              |
     +-----------------------------*/
