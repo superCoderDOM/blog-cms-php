@@ -145,6 +145,29 @@
         }
     }
 
+    // CREATE new comment in database
+    function createComment() {
+
+        global $connection;
+
+        if(isset($_POST['submit_comment'])) {
+            
+            $comment_post_id = $_GET['comment_post_id'];
+            $comment_author = $_POST['comment_author'];
+            $comment_email = $_POST['comment_email'];
+            $comment_content = $_POST['comment_content'];
+            // $comment_status = 'Submitted';
+            // $comment_date = date('d-m-y');
+
+            $query = "INSERT INTO comments(comment_post_id, comment_author, comment_email, comment_content) ";
+            $query .= "VALUES('{$comment_post_id}', '{$comment_author}', '{$comment_email}', '{$comment_content}')";
+
+            $addComment = mysqli_query($connection, $query);
+            confirmQuery($addcomment);
+            header("Location: posts.php?post_id={$comment_post_id}");  // forces page reload after deletion
+        }
+    }
+
     /*-----------------------------+
     |           POSTS              |
     +-----------------------------*/
