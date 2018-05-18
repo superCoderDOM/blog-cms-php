@@ -3,7 +3,10 @@
 
     // Fetch all posts with tags like search keyword
     $search =  $_POST['search'];
-    $query = "SELECT * FROM posts WHERE post_tags LIKE '%$search%' ORDER BY post_id DESC";
+    $query = "SELECT * FROM posts 
+        WHERE post_tags LIKE '%$search%' 
+        AND post_status = 'Published'
+        ORDER BY post_id DESC";
     $selectPostsByTags = mysqli_query($connection, $query);
 
     if(!$selectPostsByTags) {
