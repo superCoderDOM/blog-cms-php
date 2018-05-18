@@ -56,30 +56,43 @@
                 <!-- Comments Form -->
 
                 <?php 
-                
+
                     if(isset($_POST['submit_comment'])) {
-                
+
                         $comment_post_id = $post_id;
                         $comment_author = $_POST['comment_author'];
                         $comment_email = $_POST['comment_email'];
                         $comment_content = $_POST['comment_content'];
                         // $comment_status = 'Submitted';
                         // $comment_date = date('d-m-y');
-            
+
                         $query = "INSERT INTO comments (comment_post_id, comment_author, comment_email, comment_content) ";
                         $query .= "VALUES ('{$comment_post_id}', '{$comment_author}', '{$comment_email}', '{$comment_content}')";
             
                         $addComment = mysqli_query($connection, $query);
 
                         if(!$addComment) {
+
                             die('QUERY FAILED: ' . mysqli_error($connection));
+
+                        } else {
+
+                            $query = "UPDATE posts SET post_comment_count = post_comment_count + 1 ";
+                            $query .= "WHERE post_id = $post_id ";
+
+                            $updatePostCommentCount = mysqli_query($connection, $query);
+                            if(!$updatePostCommentCount) {
+                                die('QUERY FAILED: ' . mysqli_error($connection));
+                            }
                         }
                     }
 
                 ?>
 
                 <div class="well">
+
                     <h4>Leave a Comment:</h4>
+
                     <form action="" method="post" role="form">
                         <div class="form-group">
                             <label for="comment_author"> Name </label>
@@ -95,6 +108,7 @@
                         </div>
                         <button type="submit" class="btn btn-primary" name="submit_comment"> Submit </button>
                     </form>
+
                 </div>
 
                 <hr>
@@ -125,7 +139,7 @@
                             </a>
                             <div class="media-body">
                                 <h4 class="media-heading"><?php echo $comment_author; ?>
-                                    <small><?php echo date('F j, Y \a\t g:i A', $post_date); ?></small>
+                                    <small><?php echo date('F j, Y \a\t g:i A', $comment_date); ?></small>
                                 </h4>
                                 <?php echo $comment_content; ?>
                             </div>
