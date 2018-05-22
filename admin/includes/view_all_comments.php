@@ -1,7 +1,7 @@
 <table class="table table-bordered table-hover">
     <thead class="thead-dark">
         <tr>
-            <th> Id </th>
+            <th> ID </th>
             <th> Blog Post </th>
             <th> Author </th>
             <th> Email </th>

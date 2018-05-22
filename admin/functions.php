@@ -44,7 +44,6 @@
 
         global $connection;
 
-        // Find and display all categories
         $query = "SELECT * FROM categories";
         $allCategories = mysqli_query($connection, $query);
         confirmQuery($allCategories);
@@ -86,7 +85,6 @@
 
         global $connection;
 
-        // Delete a category and refresh page
         if(isset($_GET['delete_cat_id'])) {
 
             $cat_id = $_GET['delete_cat_id'];
@@ -130,7 +128,6 @@
 
         global $connection;
 
-        // Find and display all categories
         $query = "SELECT * FROM comments";
         $selectAllComments = mysqli_query($connection, $query);
 
@@ -144,7 +141,7 @@
             $comment_status = $row['comment_status'];
             $comment_date = $row['comment_date'];
 
-            // Fecth title associated with category id
+            // Fecth post title
             $query = "SELECT * FROM posts WHERE post_id = {$comment_post_id}";
             $selectPostByID = mysqli_query($connection, $query);
         
@@ -169,11 +166,11 @@
         }
     }
 
+    // UPDATE comment status in database
     function updateCommentStatus() {
 
         global $connection;
 
-        // Update status and refresh page
         if(isset($_GET['approve_comment_id']) || isset($_GET['reject_comment_id'])) {
 
             if(isset($_GET['approve_comment_id'])) {
@@ -201,7 +198,6 @@
 
         global $connection;
 
-        // Delete a category and refresh page
         if(isset($_GET['delete_comment_id'])) {
 
             $comment_id = $_GET['delete_comment_id'];
@@ -247,12 +243,11 @@
         }
     }
 
-    // RETRIEVE all categories from database
+    // RETRIEVE all blog posts from database
     function fetchAllPosts() {
 
         global $connection;
 
-        // Find and display all categories
         $query = "SELECT * FROM posts";
         $allPosts = mysqli_query($connection, $query);
 
@@ -269,7 +264,7 @@
             $post_comment_count = $row['post_comment_count'];
             $post_status = $row['post_status'];
 
-            // Fecth title associated with category id
+            // Fecth category title
             $query = "SELECT * FROM categories WHERE cat_id = {$post_category_id}";
             $selectCategoryByID = mysqli_query($connection, $query);
         
@@ -344,7 +339,6 @@
 
         global $connection;
 
-        // Delete a category and refresh page
         if(isset($_GET['delete_post_id'])) {
 
             $post_id = $_GET['delete_post_id'];
@@ -352,6 +346,136 @@
             $deletePostByID = mysqli_query($connection, $query);
             confirmQuery($deletePostByID);
             header("Location: posts.php");  // forces page reload after deletion
+        }
+    }
+
+    /*-----------------------------+
+    |           USERS              |
+    +-----------------------------*/
+
+    // CREATE new user in database
+    function createUser() {
+
+        global $connection;
+
+        if(isset($_POST['create_user'])) {
+            
+            $username = $_POST['username'];
+            $user_firstname = $_POST['user_firstname'];
+            $user_lastname = $_POST['user_lastname'];
+            $user_email = $_POST['user_email'];
+
+            $user_password = $_POST['user_password'];
+            $user_role = $_POST['user_role'];
+
+            $query = "INSERT INTO users(username, user_firstname, user_lastname, user_email, user_password, user_role) ";
+            $query .= "VALUES('{$username}', '{$user_firstname}', '{$user_lastname}', '{$user_email}', '{$user_password}', '{$user_role}')";
+
+            $addUser = mysqli_query($connection, $query);
+            confirmQuery($addUser);
+            header("Location: users.php");  // forces page reload after deletion
+        }
+    }
+
+    // RETRIEVE all users from database
+    function fetchAllUsers() {
+
+        global $connection;
+
+        $query = "SELECT * FROM users";
+        $selectAllUsers = mysqli_query($connection, $query);
+
+        while($row = mysqli_fetch_assoc($selectAllUsers)) {
+
+            $user_id = $row['user_id'];
+            $username = $row['username'];
+            $user_firstname = $row['user_firstname'];
+            $user_lastname = $row['user_lastname'];
+            $user_email = $row['user_email'];
+            $user_role = $row['user_role'];
+
+            // Display results as table row
+            echo "<tr>";
+                echo "<td> {$user_id} </td>";
+                echo "<td> {$username} </td>";
+                echo "<td> {$user_firstname} </td>";
+                echo "<td> {$user_lastname} </td>";
+                echo "<td> {$user_email} </td>";
+                echo "<td> {$user_role} </td>";
+                echo "<td><a href='users.php?change_to_admin={$user_id}'>Admin </a></td>";
+                echo "<td><a href='users.php?change_to_subscriber={$user_id}'> Subscriber </a></td>";
+                echo "<td><a href='users.php?source=edit_user&edit_user_id={$user_id}'> Edit </a></td>";
+            echo "<td><a href='users.php?delete_user_id={$user_id}'> Delete </a></td>";
+            echo "</tr>";
+        }
+    }
+
+    // UPDATE existing user in database
+    function updateUser($user_id) {
+
+        global $connection;
+
+        if(isset($_POST['update_user'])) {
+
+            $username = $_POST['username'];
+            $user_firstname = $_POST['user_firstname'];
+            $user_lastname = $_POST['user_lastname'];
+            $user_email = $_POST['user_email'];
+            $user_password = $_POST['user_password'];
+            $user_role = $_POST['user_role'];
+
+            $query = "UPDATE users SET ";
+            $query .= "username = '{$username}', ";
+            $query .= "user_firstname = '{$user_firstname}', ";
+            $query .= "user_lastname = '{$user_lastname}', ";
+            $query .= "user_email = '{$user_email}', ";
+            $query .= "user_password = '{$user_password}', ";
+            $query .= "user_role = '{$user_role}' ";
+            $query .= "WHERE user_id = {$user_id} ";
+
+            $updateUserByID = mysqli_query($connection, $query);
+            confirmQuery($updateUserByID);
+            header("Location: users.php");  // forces page reload after update
+        }
+    }
+
+    // UPDATE user role in database
+    function updateUserRole() {
+
+        global $connection;
+
+        if(isset($_GET['change_to_admin']) || isset($_GET['change_to_subscriber'])) {
+
+            if(isset($_GET['change_to_admin'])) {
+
+                $user_id = $_GET['change_to_admin'];
+                $user_role = 'admin';
+
+            } elseif(isset($_GET['change_to_subscriber'])) {
+
+                $user_id = $_GET['change_to_subscriber'];
+                $user_role = 'subscriber';
+            }
+
+            $query = "UPDATE users SET user_role = '{$user_role}' WHERE user_id = {$user_id}";
+            $updateUserByID = mysqli_query($connection, $query);
+            confirmQuery($updateUserByID);
+            header("Location: users.php");  // forces page reload after update
+        }
+    }
+
+    // DELETE user from database
+    function deleteUser() {
+
+        global $connection;
+
+        if(isset($_GET['delete_user_id'])) {
+
+            $user_id = $_GET['delete_user_id'];
+            $query = "DELETE FROM users WHERE user_id = {$user_id}";
+            $deleteUserByID = mysqli_query($connection, $query);
+            confirmQuery($deleteUserByID);
+            header("Location: users.php");  // forces page reload after deletion
         }
     }
 
