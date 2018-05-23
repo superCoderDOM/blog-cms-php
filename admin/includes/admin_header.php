@@ -17,6 +17,8 @@
         if($_SESSION['user_role'] !== 'admin') {
             header("Location: ../index.php");
         }
+    } else {
+        header("Location: ../index.php");
     }
 
 ?>
