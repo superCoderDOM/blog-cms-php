@@ -3,7 +3,7 @@
     <div class="col-lg-12">
         <h1 class="page-header">
             Administration Dashboard
-            <small>Author</small>
+            <small><?php echo $_SESSION['user_firstname'] . " " . $_SESSION['user_lastname']; ?></small>
         </h1>
         <ol class="breadcrumb">
             <li>

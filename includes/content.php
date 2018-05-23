@@ -3,7 +3,7 @@
 
     
     <?php 
-        if(isset($_POST['submit']) && isset($_POST['search'])) {
+        if(isset($_POST['search_submit']) && isset($_POST['search'])) {
 
             ?>
                 <h1 class="page-header">
