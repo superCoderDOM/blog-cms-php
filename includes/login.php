@@ -32,9 +32,11 @@
 
                 if($user_email === $row['user_email'] && $user_password === $row['user_password']) {
 
-                    $_SESSION['username'] = $row[' $username'];
+                    // $_SESSION['user_id'] = $row['$user_id'];
+                    $_SESSION['username'] = $row['username'];
                     $_SESSION['user_firstname'] = $row['user_firstname'];
                     $_SESSION['user_lastname'] = $row['user_lastname'];
+                    // $_SESSION['user_email'] = $row['user_email'];
                     $_SESSION['user_role'] = $row['user_role'];
 
                     header("Location: ../admin/index.php");  // redirects to CMS Administration Dashbpoard

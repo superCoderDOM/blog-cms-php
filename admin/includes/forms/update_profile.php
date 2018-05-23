@@ -1,17 +1,16 @@
 <?php 
 
-    // Update User Form Handler
-    if(isset($_GET['edit_user_id'])) {
+    // Update Profile Form Handler
+    if(isset($_SESSION['username'])) {
 
-        $user_id = $_GET['edit_user_id'];
+        $username = $_SESSION['username'];
 
-        updateUser($user_id);
-
-        $query = "SELECT * FROM users WHERE user_id = {$user_id}";
-        $selectUserByID = mysqli_query($connection, $query);
-
-        while($row = mysqli_fetch_assoc($selectUserByID)) {
-
+        
+        $query = "SELECT * FROM users WHERE username = '{$username}'";
+        $selectUserByUsername = mysqli_query($connection, $query);
+        
+        while($row = mysqli_fetch_assoc($selectUserByUsername)) {
+            
             $user_id = $row['user_id'];
             $username = $row['username'];
             $user_firstname = $row['user_firstname'];
@@ -19,6 +18,8 @@
             $user_email = $row['user_email'];
             $user_password = $row['user_password'];
             $user_role = $row['user_role'];
+
+            updateUser($user_id);
 
             ?>
 
@@ -52,9 +53,9 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <input type="submit" name="update_user" class="btn btn-primary" value="Update User">
+                    <input type="submit" name="update_user" class="btn btn-primary" value="Update Profile">
                 </div>
-           </form>
+            </form>
 
             <?php
         }
