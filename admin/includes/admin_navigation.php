@@ -8,7 +8,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="/admin">CMS Admin</a>
+        <a class="navbar-brand" href="index.php">CMS Admin</a>
     </div>
     <?php include 'includes/menus/top_menu.php'; ?>
     <?php include 'includes/menus/side_menu.php'; ?>

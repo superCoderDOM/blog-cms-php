@@ -30,14 +30,14 @@
 
             while($row = mysqli_fetch_assoc($selectUserByID)) {
 
-                if($user_password === $row['user_password']) {
+                if($user_email === $row['user_email'] && $user_password === $row['user_password']) {
 
                     $_SESSION['username'] = $row[' $username'];
                     $_SESSION['user_firstname'] = $row['user_firstname'];
                     $_SESSION['user_lastname'] = $row['user_lastname'];
                     $_SESSION['user_role'] = $row['user_role'];
 
-                    header("Location: ../admin");  // redirects to CMS Administration Dashbpoard
+                    header("Location: ../admin/index.php");  // redirects to CMS Administration Dashbpoard
 
                 } else {
 
