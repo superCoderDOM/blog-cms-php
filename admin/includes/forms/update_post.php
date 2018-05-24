@@ -62,8 +62,11 @@
                     <input type="text" class="form-control" name="post_author" value="<?php echo $post_author; ?>">
                 </div>
                 <div class="form-group">
-                    <label for="post_author">Post Status</label>
-                    <input type="text" class="form-control" name="post_status" value="<?php echo $post_status; ?>">
+                    <label for="post_status">Post Status</label>
+                    <select name="post_status" id="post_status" class="form-control">
+                        <option value='Draft' <?php echo ($post_status === 'Draft' ? 'selected' : '') ?> >Draft</option>
+                        <option value='Published' <?php echo ($post_status === 'Published' ? 'selected' : ''); ?> >Published</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label for="post_image">Post Image</label>
@@ -72,14 +75,13 @@
                 </div>
                 <div class="form-group">
                     <label for="post_content">Post Content</label>
-                    <textarea class="form-control" name="post_content" rows="10"><?php echo $post_content; ?></textarea>
+                    <textarea class="form-control" name="post_content" id="editor" rows="10"><?php echo $post_content; ?></textarea>
                 </div>
                 <div class="form-group">
                     <label for="post_tags">Post Tags</label>
                     <input type="text" class="form-control" name="post_tags" value="<?php echo $post_tags; ?>">
                 </div>
                 <div class="form-group">
-                    <label for=""></label>
                     <input type="submit" name="update_post" class="btn btn-primary" value="Update Post">
                 </div>
             </form>

@@ -31,7 +31,10 @@
     </div>
     <div class="form-group">
         <label for="post_author">Post Status</label>
-        <input type="text" class="form-control" name="post_status">
+        <select class="form-control" name="post_status">
+            <option value="Draft">Draft</option>
+            <option value="Published">Published</option>
+        </select>
     </div>
     <div class="form-group">
         <label for="post_image">Post Image</label>
@@ -39,7 +42,7 @@
     </div>
     <div class="form-group">
         <label for="post_content">Post Content</label>
-        <textarea class="form-control" name="post_content" rows="10"></textarea>
+        <textarea class="form-control" name="post_content" id="editor" rows="10"></textarea>
     </div>
     <div class="form-group">
         <label for="post_tags">Post Tags</label>
