@@ -167,8 +167,8 @@
 
                 var options = {
                 chart: {
-                    title: 'CMS Graph',
-                    subtitle: 'Posts, Comments',
+                    title: 'Blog Performance',
+                    subtitle: 'Posts, Comments, Users, and Categories',
                 }
                 };
 
