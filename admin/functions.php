@@ -373,7 +373,9 @@
 
             $addUser = mysqli_query($connection, $query);
             confirmQuery($addUser);
-            header("Location: users.php");  // forces page reload after deletion
+            echo "<h2>New user created: {$username} </h3>";
+            echo "<a href='users.php' role='button' class='btn btn-outline-primary'> View All Users </a>";
+            // header("Location: users.php");  // forces page reload after deletion
         }
     }
 
