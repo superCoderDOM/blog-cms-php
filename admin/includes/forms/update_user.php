@@ -47,8 +47,8 @@
                 <div class="form-group">
                     <label for="user_role">Role</label>
                     <select name="user_role" id="user_role" class="form-control">
-                        <option value='subscriber' <?php echo ($user_role === 'subscriber' ? 'selected' : '') ?> >Subscriber</option>
-                        <option value='admin' <?php echo ($user_role === 'admin' ? 'selected' : ''); ?> >Admin</option>
+                        <option value='Subscriber' <?php echo ($user_role === 'Subscriber' ? 'selected' : '') ?> >Subscriber</option>
+                        <option value='Admin' <?php echo ($user_role === 'Admin' ? 'selected' : ''); ?> >Admin</option>
                     </select>
                 </div>
                 <div class="form-group">

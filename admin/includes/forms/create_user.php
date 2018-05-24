@@ -24,8 +24,8 @@
     <div class="form-group">
         <label for="user_role">Role</label>
         <select name="user_role" id="user_role" class="form-control">
-            <option value='subscriber' selected> Subscriber </option>
-            <option value='admin'> Admin </option>
+            <option value='Subscriber' selected> Subscriber </option>
+            <option value='Admin'> Admin </option>
         </select>
     </div>
     <div class="form-group">
