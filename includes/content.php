@@ -12,7 +12,7 @@
                 </h1>
             <?php
 
-            include 'includes/blog_search_list.php';
+            include './includes/blog_search_list.php';
 
         } elseif(isset($_GET['cat_id'])) {
 
@@ -37,7 +37,7 @@
                     </h1>
                     <?php
 
-                    include 'includes/blog_category_list.php';
+                    include './includes/blog_category_list.php';
                 }
             }
         } else {
@@ -49,10 +49,10 @@
                 </h1>
             <?php
 
-            include 'includes/blog_list.php';
+            include './includes/blog_list.php';
 
         }
     ?>
-    <?php include 'includes/pager.php'; ?>
+    <?php include './includes/pager.php'; ?>
 
 </div>

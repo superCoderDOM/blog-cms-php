@@ -1,11 +1,13 @@
 <?php 
 
-    require __DIR__ . '/vendor/autoload.php';
+    require __DIR__ . './vendor/autoload.php';
 
 
     $dotenv = new Dotenv\Dotenv(__DIR__);
     $dotenv->load();
     $dotenv->required(['DB_HOST', 'DB_DATABASE', 'DB_USERNAME', 'DB_PASSWORD']);
+
+    session_start();
 
 ?>
 
@@ -23,10 +25,10 @@
     <title>Blog - Home</title>
 
     <!-- Bootstrap Core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="./css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link href="css/blog-home.css" rel="stylesheet">
+    <link href="./css/blog-home.css" rel="stylesheet">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -39,22 +41,22 @@
 
 <body>
 
-    <?php include 'includes/navigation.php'; ?>
+    <?php include './includes/navigation.php'; ?>
 
     <!-- Page Content -->
     <div class="container">
 
         <div class="row">
 
-            <?php include 'includes/content.php'; ?>
-            <?php include 'includes/sidebar.php'; ?>
+            <?php include './includes/content.php'; ?>
+            <?php include './includes/sidebar.php'; ?>
 
         </div>
         <!-- /.row -->
 
         <hr>
 
-        <?php include 'includes/footer.php'; ?>
+        <?php include './includes/footer.php'; ?>
 
     </div>
     <!-- /.container -->

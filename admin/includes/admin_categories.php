@@ -8,7 +8,7 @@
         <div class="col-xs-6">
 
             <!-- Create New Category -->
-            <?php include 'includes/forms/create_category.php'; ?>
+            <?php include './includes/forms/create_category.php'; ?>
 
             <!-- Update Category -->
             <?php 
@@ -17,7 +17,7 @@
                 if(isset($_GET['update_cat_id'])) {
 
                     $cat_id = $_GET['update_cat_id'];
-                    include 'includes/forms/update_category.php';
+                    include './includes/forms/update_category.php';
 
                 }
 

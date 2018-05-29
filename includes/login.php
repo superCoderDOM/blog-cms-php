@@ -7,7 +7,7 @@
     $dotenv->load();
     $dotenv->required(['DB_HOST', 'DB_DATABASE', 'DB_USERNAME', 'DB_PASSWORD']);
 
-    include 'db.php';
+    include './db.php';
 
     session_start();
 

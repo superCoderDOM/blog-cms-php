@@ -56,8 +56,8 @@
             echo "<tr>";
                 echo "<td> {$cat_id} </td>";
                 echo "<td> {$cat_title} </td>";
-                echo "<td><a href='categories.php?delete_cat_id={$cat_id}'>Delete</a></td>";
-                echo "<td><a href='categories.php?update_cat_id={$cat_id}'>Edit</a></td>";
+                echo "<td><a href='./categories.php?delete_cat_id={$cat_id}'>Delete</a></td>";
+                echo "<td><a href='./categories.php?update_cat_id={$cat_id}'>Edit</a></td>";
             echo "</tr>";
         }
     }
@@ -76,7 +76,7 @@
     
             $updateCategoryByID = mysqli_query($connection, $query);
             confirmQuery($updateCategoryByID);
-            header("Location: categories.php");  // forces page reload after update
+            header("Location: ./categories.php");  // forces page reload
         }
     }
 
@@ -91,7 +91,7 @@
             $query = "DELETE FROM categories WHERE cat_id = {$cat_id}";
             $deleteCategoryByID = mysqli_query($connection, $query);
             confirmQuery($deleteCategoryByID);
-            header("Location: categories.php");  // forces page reload after deletion
+            header("Location: ./categories.php");  // forces page reload
         }
     }
 
@@ -119,7 +119,7 @@
 
             $addComment = mysqli_query($connection, $query);
             confirmQuery($addcomment);
-            header("Location: posts.php?post_id={$comment_post_id}");  // forces page reload after deletion
+            header("Location: ./posts.php?post_id={$comment_post_id}");  // forces page reload
         }
     }
 
@@ -158,9 +158,9 @@
                     echo "<td> {$comment_content} </td>";
                     echo "<td> {$comment_status} </td>";
                     echo "<td> {$comment_date} </td>";
-                    echo "<td><a href='comments.php?approve_comment_id={$comment_id}'>Approve</a></td>";
-                    echo "<td><a href='comments.php?reject_comment_id={$comment_id}'>Reject</a></td>";
-                    echo "<td><a href='comments.php?delete_comment_id={$comment_id}'>Delete</a></td>";
+                    echo "<td><a href='./comments.php?approve_comment_id={$comment_id}'>Approve</a></td>";
+                    echo "<td><a href='./comments.php?reject_comment_id={$comment_id}'>Reject</a></td>";
+                    echo "<td><a href='./comments.php?delete_comment_id={$comment_id}'>Delete</a></td>";
                 echo "</tr>";
             }
         }
@@ -189,7 +189,7 @@
 
             $updateCommentStatusByID = mysqli_query($connection, $query);
             confirmQuery($updateCommentStatusByID);
-            header("Location: comments.php");  // forces page reload after deletion
+            header("Location: ./comments.php");  // forces page reload
         }
     }
 
@@ -204,7 +204,7 @@
             $query = "DELETE FROM comments WHERE comment_id = {$comment_id}";
             $deleteCommentByID = mysqli_query($connection, $query);
             confirmQuery($deleteCommentByID);
-            header("Location: comments.php");  // forces page reload after deletion
+            header("Location: ./comments.php");  // forces page reload
         }
     }
 
@@ -239,8 +239,9 @@
 
             $addPost = mysqli_query($connection, $query);
             confirmQuery($addPost);
-            
-            // header("Location: posts.php");  // forces page reload after deletion
+
+            // echo "<p class='bg-success'>Post Created. <a href='../post.php?post_id={$post_id}'> View Post </a> or <a href='./posts.php'> View All Posts </a></p>";
+            header("Location: ./posts.php");  // forces page reload
         }
     }
 
@@ -249,7 +250,7 @@
 
         global $connection;
 
-        $query = "SELECT * FROM posts";
+        $query = "SELECT * FROM posts ORDER BY post_id DESC";
         $allPosts = mysqli_query($connection, $query);
 
         while($row = mysqli_fetch_assoc($allPosts)) {
@@ -270,7 +271,7 @@
             $selectCategoryByID = mysqli_query($connection, $query);
         
             while($row = mysqli_fetch_assoc($selectCategoryByID)) {
-        
+
                 $post_category_title = $row['cat_title'];
             }
 
@@ -285,8 +286,8 @@
                 echo "<td> {$post_tags} </td>";
                 echo "<td> {$post_comment_count} </td>";
                 echo "<td> {$post_date} </td>";
-                echo "<td><a href='posts.php?source=edit_post&edit_post_id={$post_id}'>Edit</a></td>";
-                echo "<td><a href='posts.php?delete_post_id={$post_id}'>Delete</a></td>";
+                echo "<td><a href='./posts.php?source=edit_post&edit_post_id={$post_id}'>Edit</a></td>";
+                echo "<td><a href='./posts.php?delete_post_id={$post_id}'>Delete</a></td>";
             echo "</tr>";
         }
     }
@@ -333,8 +334,7 @@
             confirmQuery($updatePostByID);
 
             echo "<p class='bg-success'>Post Updated. <a href='../post.php?post_id={$post_id}'> View Post </a> or <a href='./posts.php'> Edit More Posts </a></p>";
-
-            // header("Location: posts.php");  // forces page reload after update
+            // header("Location: ./posts.php");  // forces page reload
         }
     }
 
@@ -349,7 +349,7 @@
             $query = "DELETE FROM posts WHERE post_id = {$post_id}";
             $deletePostByID = mysqli_query($connection, $query);
             confirmQuery($deletePostByID);
-            header("Location: posts.php");  // forces page reload after deletion
+            header("Location: ./posts.php");  // forces page reload
         }
     }
 
@@ -363,7 +363,7 @@
         global $connection;
 
         if(isset($_POST['create_user'])) {
-            
+
             $username = $_POST['username'];
             $user_firstname = $_POST['user_firstname'];
             $user_lastname = $_POST['user_lastname'];
@@ -378,8 +378,8 @@
             $addUser = mysqli_query($connection, $query);
             confirmQuery($addUser);
             echo "<h2>New user created: {$username} </h3>";
-            echo "<a href='users.php' role='button' class='btn btn-outline-primary'> View All Users </a>";
-            // header("Location: users.php");  // forces page reload after deletion
+            echo "<a href='./users.php' role='button' class='btn btn-outline-primary'> View All Users </a>";
+            // header("Location: ./users.php");  // forces page reload
         }
     }
 
@@ -408,10 +408,10 @@
                 echo "<td> {$user_lastname} </td>";
                 echo "<td> {$user_email} </td>";
                 echo "<td> {$user_role} </td>";
-                echo "<td><a href='users.php?change_to_admin={$user_id}'> Admin </a></td>";
-                echo "<td><a href='users.php?change_to_subscriber={$user_id}'> Subscriber </a></td>";
-                echo "<td><a href='users.php?source=edit_user&edit_user_id={$user_id}'> Edit </a></td>";
-            echo "<td><a href='users.php?delete_user_id={$user_id}'> Delete </a></td>";
+                echo "<td><a href='./users.php?change_to_admin={$user_id}'> Admin </a></td>";
+                echo "<td><a href='./users.php?change_to_subscriber={$user_id}'> Subscriber </a></td>";
+                echo "<td><a href='./users.php?source=edit_user&edit_user_id={$user_id}'> Edit </a></td>";
+            echo "<td><a href='./users.php?delete_user_id={$user_id}'> Delete </a></td>";
             echo "</tr>";
         }
     }
@@ -441,7 +441,7 @@
 
             $updateUserByID = mysqli_query($connection, $query);
             confirmQuery($updateUserByID);
-            header("Location: users.php");  // forces page reload after update
+            header("Location: ./users.php");  // forces page reload
         }
     }
 
@@ -466,7 +466,7 @@
             $query = "UPDATE users SET user_role = '{$user_role}' WHERE user_id = {$user_id}";
             $updateUserByID = mysqli_query($connection, $query);
             confirmQuery($updateUserByID);
-            header("Location: users.php");  // forces page reload after update
+            header("Location: ./users.php");  // forces page reload
         }
     }
 
@@ -481,7 +481,7 @@
             $query = "DELETE FROM users WHERE user_id = {$user_id}";
             $deleteUserByID = mysqli_query($connection, $query);
             confirmQuery($deleteUserByID);
-            header("Location: users.php");  // forces page reload after deletion
+            header("Location: ./users.php");  // forces page reload
         }
     }
 

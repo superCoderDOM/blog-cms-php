@@ -11,7 +11,7 @@
     session_start();
 
     include "../includes/db.php";
-    include "functions.php";
+    include "./functions.php";
 
     if(isset($_SESSION['user_role'])) {
         if($_SESSION['user_role'] !== 'Admin') {

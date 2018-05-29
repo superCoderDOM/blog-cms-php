@@ -4,7 +4,7 @@
     <!-- Blog Login Well -->
     <div class="well">
         <h4>Sign In</h4>
-        <form action="includes/login.php" method="post">
+        <form action="./includes/login.php" method="post">
             <div class="form-group">
                 <input type="email" name="user_email" class="form-control" placeholder="Enter your email">
             </div>
@@ -20,7 +20,7 @@
     <!-- Blog Search Well -->
     <div class="well">
         <h4>Blog Search</h4>
-        <form action="index.php" method="post">
+        <form action="./index.php" method="post">
             <div class="input-group">
                 <input type="text" name="search" class="form-control">
                 <span class="input-group-btn">
@@ -49,7 +49,7 @@
                             $cat_id = $row['cat_id'];
                             $cat_title = $row['cat_title'];
 
-                            echo "<li><a href='index.php?cat_id={$cat_id}'>{$cat_title}</a></li>";
+                            echo "<li><a href='./index.php?cat_id={$cat_id}'>{$cat_title}</a></li>";
 
                         }
                     ?>

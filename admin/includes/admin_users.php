@@ -15,13 +15,13 @@
             // Display only requested posts
             switch($source) {
                 case 'add_user' :
-                    include 'includes/forms/create_user.php';
+                    include './includes/forms/create_user.php';
                     break;
                 case 'edit_user' :
-                    include 'includes/forms/update_user.php';
+                    include './includes/forms/update_user.php';
                     break;
                 default :
-                    include 'includes/view_all_users.php';
+                    include './includes/view_all_users.php';
             }
 
         ?>
