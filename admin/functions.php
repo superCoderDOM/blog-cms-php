@@ -239,7 +239,8 @@
 
             $addPost = mysqli_query($connection, $query);
             confirmQuery($addPost);
-            header("Location: posts.php");  // forces page reload after deletion
+            
+            // header("Location: posts.php");  // forces page reload after deletion
         }
     }
 
@@ -330,7 +331,10 @@
 
             $updatePostByID = mysqli_query($connection, $query);
             confirmQuery($updatePostByID);
-            header("Location: posts.php");  // forces page reload after update
+
+            echo "<p class='bg-success'>Post Updated. <a href='../post.php?post_id={$post_id}'> View Post </a> or <a href='./posts.php'> Edit More Posts </a></p>";
+
+            // header("Location: posts.php");  // forces page reload after update
         }
     }
 
