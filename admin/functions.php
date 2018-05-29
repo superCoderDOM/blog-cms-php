@@ -30,6 +30,9 @@
 
             } else {
 
+                // Clean potential malicious SQL injections
+                $cat_title = mysqli_real_escape_string($connection, $cat_title);
+
                 $query = "INSERT INTO categories(cat_title) ";
                 $query .= "VALUE('$cat_title') ";
 
@@ -70,7 +73,10 @@
         if(isset($_POST['update_category'])) {
 
             $cat_title = $_POST['cat_title'];
-    
+
+            // Clean potential malicious SQL injections
+            $cat_title = mysqli_real_escape_string($connection, $cat_title);
+
             $query = "UPDATE categories SET cat_title = '{$cat_title}' ";
             $query .= "WHERE cat_id = '{$cat_id}' ";
     
@@ -113,6 +119,13 @@
             $comment_content = $_POST['comment_content'];
             // $comment_status = 'Submitted';
             // $comment_date = date('d-m-y');
+
+            // Clean potential malicious SQL injections
+            $username = mysqli_real_escape_string($connection, $username);
+            $comment_post_id = mysqli_real_escape_string($connection, $comment_post_id);
+            $comment_author = mysqli_real_escape_string($connection, $comment_author);
+            $comment_email = mysqli_real_escape_string($connection, $comment_email);
+            $comment_content = mysqli_real_escape_string($connection, $comment_content);
 
             $query = "INSERT INTO comments(comment_post_id, comment_author, comment_email, comment_content) ";
             $query .= "VALUES('{$comment_post_id}', '{$comment_author}', '{$comment_email}', '{$comment_content}')";
@@ -232,6 +245,12 @@
             // $post_date = date('d-m-y');
             // $post_comment_count = 0;
 
+            // Clean potential malicious SQL injections
+            $post_title = mysqli_real_escape_string($connection, $post_title);
+            $post_author = mysqli_real_escape_string($connection, $post_author);
+            $post_tags = mysqli_real_escape_string($connection, $post_tags);
+            $post_content = mysqli_real_escape_string($connection, $post_content);
+
             move_uploaded_file($post_image_temp, "../images/$post_image");
 
             $query = "INSERT INTO posts(post_category_id, post_title, post_author, post_image, post_content, post_tags, post_status) ";
@@ -308,6 +327,12 @@
             $post_image_temp = $_FILES['post_image']['tmp_name'];
             $post_tags = $_POST['post_tags'];
             $post_content = $_POST['post_content'];
+
+            // Clean potential malicious SQL injections
+            $post_title = mysqli_real_escape_string($connection, $post_title);
+            $post_author = mysqli_real_escape_string($connection, $post_author);
+            $post_tags = mysqli_real_escape_string($connection, $post_tags);
+            $post_content = mysqli_real_escape_string($connection, $post_content);
 
             move_uploaded_file($post_image_temp, "../images/$post_image");
 
@@ -393,9 +418,16 @@
             $user_firstname = $_POST['user_firstname'];
             $user_lastname = $_POST['user_lastname'];
             $user_email = $_POST['user_email'];
-
             $user_password = $_POST['user_password'];
             $user_role = $_POST['user_role'];
+
+            // Clean potential malicious SQL injections
+            $username = mysqli_real_escape_string($connection, $username);
+            $user_firstname = mysqli_real_escape_string($connection, $user_firstname);
+            $user_lastname = mysqli_real_escape_string($connection, $user_lastname);
+            $user_email = mysqli_real_escape_string($connection, $user_email);
+            $user_password = mysqli_real_escape_string($connection, $user_password);
+            $user_role = mysqli_real_escape_string($connection, $user_role);
 
             $query = "INSERT INTO users(username, user_firstname, user_lastname, user_email, user_password, user_role) ";
             $query .= "VALUES('{$username}', '{$user_firstname}', '{$user_lastname}', '{$user_email}', '{$user_password}', '{$user_role}')";
@@ -454,6 +486,14 @@
             $user_email = $_POST['user_email'];
             $user_password = $_POST['user_password'];
             $user_role = $_POST['user_role'];
+
+            // Clean potential malicious SQL injections
+            $username = mysqli_real_escape_string($connection, $username);
+            $user_firstname = mysqli_real_escape_string($connection, $user_firstname);
+            $user_lastname = mysqli_real_escape_string($connection, $user_lastname);
+            $user_email = mysqli_real_escape_string($connection, $user_email);
+            $user_password = mysqli_real_escape_string($connection, $user_password);
+            $user_role = mysqli_real_escape_string($connection, $user_role);
 
             $query = "UPDATE users SET ";
             $query .= "username = '{$username}', ";
