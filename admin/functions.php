@@ -277,6 +277,7 @@
 
             // Display results as table row
             echo "<tr>";
+                echo "<td><input type='checkbox' class='checkBoxes' name='checkBoxArray[]' value='{$post_id}'></td>";
                 echo "<td> {$post_id} </td>";
                 echo "<td> {$post_author} </td>";
                 echo "<td><a href='../post.php?post_id={$post_id}'> {$post_title} </a></td>";
@@ -338,6 +339,19 @@
         }
     }
 
+    // UPDATE post status in database
+    function updatePostStatus($post_id, $post_status) {
+
+        global $connection;
+
+            $query = "UPDATE posts SET post_status = '{$post_status}' ";
+            $query .= "WHERE post_id = '{$post_id}' ";
+
+            $updatePostStatusByID = mysqli_query($connection, $query);
+            confirmQuery($updatePostStatusByID);
+            header("Location: ./posts.php");  // forces page reload
+    }
+
     // DELETE post from database
     function deletePost() {
 
@@ -351,6 +365,17 @@
             confirmQuery($deletePostByID);
             header("Location: ./posts.php");  // forces page reload
         }
+    }
+
+    // DELETE post with ID argument
+    function deletePostWithID($post_id) {
+
+        global $connection;
+
+        $query = "DELETE FROM posts WHERE post_id = {$post_id}";
+        $deletePostByID = mysqli_query($connection, $query);
+        confirmQuery($deletePostByID);
+        header("Location: ./posts.php");  // forces page reload
     }
 
     /*-----------------------------+
