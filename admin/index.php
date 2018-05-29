@@ -1,4 +1,4 @@
-<?php include 'includes/admin_header.php'; ?>
+<?php include './includes/admin_header.php'; ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -14,13 +14,13 @@
     <title>CMS Admin - Dashboard</title>
 
     <!-- Bootstrap Core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="./css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link href="css/sb-admin.css" rel="stylesheet">
+    <link href="./css/sb-admin.css" rel="stylesheet">
 
     <!-- Custom Fonts -->
-    <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="./font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 
     <!-- Google Charts -->
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -38,13 +38,13 @@
 
     <div id="wrapper">
 
-        <?php include "includes/admin_navigation.php"; ?>
+        <?php include "./includes/admin_navigation.php"; ?>
 
         <div id="page-wrapper">
 
             <div class="container-fluid">
 
-                <?php include "includes/admin_content.php"; ?>
+                <?php include "./includes/admin_content.php"; ?>
 
             </div>
             <!-- /.container-fluid -->
@@ -56,10 +56,10 @@
     <!-- /#wrapper -->
 
     <!-- jQuery -->
-    <script src="js/jquery.js"></script>
+    <script src="./js/jquery.js"></script>
 
     <!-- Bootstrap Core JavaScript -->
-    <script src="js/bootstrap.min.js"></script>
+    <script src="./js/bootstrap.min.js"></script>
 
 </body>
 
