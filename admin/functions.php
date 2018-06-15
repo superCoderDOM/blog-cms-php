@@ -7,6 +7,8 @@
 
         if(!$result) {
             die('QUERY FAILED: ' . mysqli_error($connection));
+        } else {
+            return true;
         }
     }
 
@@ -14,7 +16,7 @@
     |           CATEGORIES              |
     +----------------------------------*/
 
-    // CREATE new category in database
+    // CREATE
     function insertCategory() {
 
         global $connection;
@@ -42,7 +44,7 @@
         }
     }
 
-    // RETRIEVE all categories from database
+    // RETRIEVE
     function fetchAllCategories() {
 
         global $connection;
@@ -65,7 +67,7 @@
         }
     }
 
-    // UPDATE existing category in database
+    // UPDATE
     function updateCategory($cat_id) {
 
         global $connection;
@@ -86,7 +88,7 @@
         }
     }
 
-    // DELETE category from database
+    // DELETE
     function deleteCategory() {
 
         global $connection;
@@ -106,7 +108,7 @@
     +--------------------------------*/
 
 
-    // CREATE new comment in database
+    // CREATE
     function createComment() {
 
         global $connection;
@@ -143,7 +145,7 @@
         }
     }
 
-    // RETRIEVE all comments from database
+    // RETRIEVE
     function fetchAllComments() {
 
         global $connection;
@@ -186,7 +188,7 @@
         }
     }
 
-    // UPDATE comment status in database
+    // UPDATE
     function updateCommentStatus() {
 
         global $connection;
@@ -213,7 +215,7 @@
         }
     }
 
-    // DELETE post from database
+    // DELETE
     function deleteComment() {
 
         global $connection;
@@ -232,7 +234,7 @@
     |           POSTS              |
     +-----------------------------*/
 
-    // CREATE new blog post in database
+    // CREATE
     function createPost() {
 
         global $connection;
@@ -271,7 +273,41 @@
         }
     }
 
-    // RETRIEVE all blog posts from database
+    function clonePostWithID($post_id) {
+
+        global $connection;
+
+        $query = "SELECT * FROM posts WHERE post_id = '{$post_id}'";
+        $selectPostByID = mysqli_query($connection, $query);
+        if(confirmQuery($selectPostByID)) {
+
+            while($row = mysqli_fetch_assoc($selectPostByID)) {
+    
+                $post_category_id = $row['post_category_id'];
+                $post_title = $row['post_title'];
+                $post_author = $row['post_author'];
+                $post_date = $row['post_date'];
+                $post_image = $row['post_image'];
+                $post_content = $row['post_content'];
+                $post_tags = $row['post_tags'];
+                $post_status = $row['post_status'];
+
+                $post_title = mysqli_real_escape_string($connection, $post_title);
+                $post_author = mysqli_real_escape_string($connection, $post_author);
+                $post_tags = mysqli_real_escape_string($connection, $post_tags);
+                $post_content = mysqli_real_escape_string($connection, $post_content);
+            }
+    
+            $query = "INSERT INTO posts(post_category_id, post_title, post_author, post_image, post_content, post_tags, post_status) ";
+            $query .= "VALUES('{$post_category_id}', '{$post_title}', '{$post_author}', '{$post_image}', '{$post_content}', '{$post_tags}', '{$post_status}')";
+    
+            $addPost = mysqli_query($connection, $query);
+            confirmQuery($addPost);
+            header("Location: ./posts.php");  // forces page reload
+        }
+    }
+
+    // RETRIEVE
     function fetchAllPosts() {
 
         global $connection;
@@ -320,7 +356,7 @@
         }
     }
 
-    // UPDATE existing post in database
+    // UPDATE
     function updatePost($post_id) {
 
         global $connection;
@@ -372,7 +408,6 @@
         }
     }
 
-    // UPDATE post status in database
     function updatePostStatus($post_id, $post_status) {
 
         global $connection;
@@ -385,7 +420,7 @@
             header("Location: ./posts.php");  // forces page reload
     }
 
-    // DELETE post from database
+    // DELETE
     function deletePost() {
 
         global $connection;
@@ -400,7 +435,6 @@
         }
     }
 
-    // DELETE post with ID argument
     function deletePostWithID($post_id) {
 
         global $connection;
@@ -415,7 +449,7 @@
     |           USERS              |
     +-----------------------------*/
 
-    // CREATE new user in database
+    // CREATE
     function createUser() {
 
         global $connection;
@@ -462,7 +496,7 @@
         }
     }
 
-    // RETRIEVE all users from database
+    // RETRIEVE
     function fetchAllUsers() {
 
         global $connection;
@@ -495,7 +529,7 @@
         }
     }
 
-    // UPDATE existing user in database
+    // UPDATE
     function updateUser($user_id) {
 
         global $connection;
@@ -548,7 +582,6 @@
         }
     }
 
-    // UPDATE user role in database
     function updateUserRole() {
 
         global $connection;
@@ -573,7 +606,7 @@
         }
     }
 
-    // DELETE user from database
+    // DELETE
     function deleteUser() {
 
         global $connection;

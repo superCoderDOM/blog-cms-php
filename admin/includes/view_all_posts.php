@@ -20,6 +20,10 @@
                 case 'Delete':
                     deletePostWithID($post_id);
                     break;
+
+                case 'Clone':
+                    clonePostWithID($post_id);
+                    break;
             }
         }
     }
@@ -35,6 +39,7 @@
                 <option value="Published">Publish</option>
                 <option value="Draft">Draft</option>
                 <option value="Delete">Delete</option>
+                <option value="Clone">Clone</option>
             </select>
         </div>
 
