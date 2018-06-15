@@ -112,7 +112,7 @@
         global $connection;
 
         if(isset($_POST['submit_comment'])) {
-            
+
             $comment_post_id = $_GET['comment_post_id'];
             $comment_author = $_POST['comment_author'];
             $comment_email = $_POST['comment_email'];
@@ -120,19 +120,26 @@
             // $comment_status = 'Submitted';
             // $comment_date = date('d-m-y');
 
-            // Clean potential malicious SQL injections
-            $username = mysqli_real_escape_string($connection, $username);
-            $comment_post_id = mysqli_real_escape_string($connection, $comment_post_id);
-            $comment_author = mysqli_real_escape_string($connection, $comment_author);
-            $comment_email = mysqli_real_escape_string($connection, $comment_email);
-            $comment_content = mysqli_real_escape_string($connection, $comment_content);
+            if(!empty($comment_author) && !empty($comment_email) && !empty($comment_content)) {
 
-            $query = "INSERT INTO comments(comment_post_id, comment_author, comment_email, comment_content) ";
-            $query .= "VALUES('{$comment_post_id}', '{$comment_author}', '{$comment_email}', '{$comment_content}')";
+                // Clean potential malicious SQL injections
+                $username = mysqli_real_escape_string($connection, $username);
+                $comment_post_id = mysqli_real_escape_string($connection, $comment_post_id);
+                $comment_author = mysqli_real_escape_string($connection, $comment_author);
+                $comment_email = mysqli_real_escape_string($connection, $comment_email);
+                $comment_content = mysqli_real_escape_string($connection, $comment_content);
 
-            $addComment = mysqli_query($connection, $query);
-            confirmQuery($addcomment);
-            header("Location: ./posts.php?post_id={$comment_post_id}");  // forces page reload
+                $query = "INSERT INTO comments(comment_post_id, comment_author, comment_email, comment_content) ";
+                $query .= "VALUES('{$comment_post_id}', '{$comment_author}', '{$comment_email}', '{$comment_content}')";
+
+                $addComment = mysqli_query($connection, $query);
+                confirmQuery($addcomment);
+                header("Location: ./posts.php?post_id={$comment_post_id}");  // forces page reload
+
+            } else {
+
+                echo "<script>alert('Fields cannot be empty')</script>";
+            }
         }
     }
 
@@ -141,7 +148,7 @@
 
         global $connection;
 
-        $query = "SELECT * FROM comments";
+        $query = "SELECT * FROM comments ORDER BY comment_id DESC";
         $selectAllComments = mysqli_query($connection, $query);
 
         while($row = mysqli_fetch_assoc($selectAllComments)) {
@@ -306,8 +313,9 @@
                 echo "<td> {$post_tags} </td>";
                 echo "<td> {$post_comment_count} </td>";
                 echo "<td> {$post_date} </td>";
+                echo "<td><a href='../post.php?post_id={$post_id}'> View </a></td>";
                 echo "<td><a href='./posts.php?source=edit_post&edit_post_id={$post_id}'>Edit</a></td>";
-                echo "<td><a href='./posts.php?delete_post_id={$post_id}'>Delete</a></td>";
+                echo "<td><a href='./posts.php?delete_post_id={$post_id}' onClick=\"javascript: return confirm('Are you sure you want to DELETE this post?');\">Delete</a></td>";
             echo "</tr>";
         }
     }
@@ -429,14 +437,28 @@
             $user_password = mysqli_real_escape_string($connection, $user_password);
             $user_role = mysqli_real_escape_string($connection, $user_role);
 
-            $query = "INSERT INTO users(username, user_firstname, user_lastname, user_email, user_password, user_role) ";
-            $query .= "VALUES('{$username}', '{$user_firstname}', '{$user_lastname}', '{$user_email}', '{$user_password}', '{$user_role}')";
+            $query = "SELECT randSalt FROM users";
+            $selectRandSalt = mysqli_query($connection, $query);
 
-            $addUser = mysqli_query($connection, $query);
-            confirmQuery($addUser);
-            echo "<h2>New user created: {$username} </h3>";
-            echo "<a href='./users.php' role='button' class='btn btn-outline-primary'> View All Users </a>";
-            // header("Location: ./users.php");  // forces page reload
+            if(!$selectRandSalt) {
+
+                die("Query Failed: " . mysqli_error($conneciton));
+
+            } else {
+
+                $row = mysqli_fetch_assoc($selectRandSalt);
+                $salt = $row['randSalt'];
+                $hashed_password = crypt($user_password, $salt);
+
+                $query = "INSERT INTO users(username, user_firstname, user_lastname, user_email, user_password, user_role) ";
+                $query .= "VALUES('{$username}', '{$user_firstname}', '{$user_lastname}', '{$user_email}', '{$hashed_password}', '{$user_role}')";
+
+                $addUser = mysqli_query($connection, $query);
+                confirmQuery($addUser);
+                echo "<h2>New user created: {$username} </h3>";
+                echo "<a href='./users.php' role='button' class='btn btn-default'> View All Users </a>";
+                // header("Location: ./users.php");  // forces page reload
+            }
         }
     }
 
@@ -495,18 +517,34 @@
             $user_password = mysqli_real_escape_string($connection, $user_password);
             $user_role = mysqli_real_escape_string($connection, $user_role);
 
-            $query = "UPDATE users SET ";
-            $query .= "username = '{$username}', ";
-            $query .= "user_firstname = '{$user_firstname}', ";
-            $query .= "user_lastname = '{$user_lastname}', ";
-            $query .= "user_email = '{$user_email}', ";
-            $query .= "user_password = '{$user_password}', ";
-            $query .= "user_role = '{$user_role}' ";
-            $query .= "WHERE user_id = {$user_id} ";
+            $query = "SELECT randSalt FROM users WHERE username = '{$username}'";
+            $selectRandSalt = mysqli_query($connection, $query);
 
-            $updateUserByID = mysqli_query($connection, $query);
-            confirmQuery($updateUserByID);
-            header("Location: ./users.php");  // forces page reload
+            if(!$selectRandSalt) {
+
+                die("Query Failed: " . mysqli_error($conneciton));
+
+            } else {
+
+                $row = mysqli_fetch_assoc($selectRandSalt);
+                $salt = $row['randSalt'];
+                $hashed_password = crypt($user_password, $salt);
+
+                $query = "UPDATE users SET ";
+                $query .= "username = '{$username}', ";
+                $query .= "user_firstname = '{$user_firstname}', ";
+                $query .= "user_lastname = '{$user_lastname}', ";
+                $query .= "user_email = '{$user_email}', ";
+                $query .= "user_password = '{$hashed_password}', ";
+                $query .= "user_role = '{$user_role}' ";
+                $query .= "WHERE user_id = {$user_id} ";
+
+                $updateUserByID = mysqli_query($connection, $query);
+                confirmQuery($updateUserByID);
+                echo "<p class='bg-success'>User <em>{$username}</em> updated. ";
+                echo "<a href='./users.php'> View All Users </a></p>";
+                // header("Location: ./users.php");  // forces page reload
+            }
         }
     }
 

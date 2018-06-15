@@ -27,15 +27,22 @@
                         echo "<li><a href='./index.php?cat_id={$cat_id}'>{$cat_title}</a></li>";
                     }
 
-                    if(isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'Admin') {
+                    if(isset($_SESSION['user_role'])) {
 
-                        echo "<li><a href='./admin/index.php'>Admin</a></li>";
+                        if($_SESSION['user_role'] === 'Admin') {
 
-                        if(isset($_GET['post_id'])) {
+                            echo "<li><a href='./admin/index.php'>Admin</a></li>";
 
-                            $post_id = $_GET['post_id'];
-                            echo "<li><a href='./admin/posts.php?source=edit_post&edit_post_id={$post_id}'>Edit Post</a></li>";
+                            if(isset($_GET['post_id'])) {
+
+                                $post_id = $_GET['post_id'];
+                                echo "<li><a href='./admin/posts.php?source=edit_post&edit_post_id={$post_id}'>Edit Post</a></li>";
+                            }
                         }
+
+                    } else {
+
+                        echo "<li><a href='./registration.php'>Register</a></li>";
                     }
 
                 ?>
