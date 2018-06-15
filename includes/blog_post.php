@@ -77,24 +77,39 @@
                             // $comment_status = 'Submitted';
                             // $comment_date = date('d-m-y');
 
-                            $query = "INSERT INTO comments (comment_post_id, comment_author, comment_email, comment_content) ";
-                            $query .= "VALUES ('{$comment_post_id}', '{$comment_author}', '{$comment_email}', '{$comment_content}')";
+                            if(!empty($comment_author) && !empty($comment_email) && !empty($comment_content)) {
 
-                            $addComment = mysqli_query($connection, $query);
+                                // Clean potential malicious SQL injections
+                                $username = mysqli_real_escape_string($connection, $username);
+                                $comment_post_id = mysqli_real_escape_string($connection, $comment_post_id);
+                                $comment_author = mysqli_real_escape_string($connection, $comment_author);
+                                $comment_email = mysqli_real_escape_string($connection, $comment_email);
+                                $comment_content = mysqli_real_escape_string($connection, $comment_content);
+                
+                                $query = "INSERT INTO comments (comment_post_id, comment_author, comment_email, comment_content) ";
+                                $query .= "VALUES ('{$comment_post_id}', '{$comment_author}', '{$comment_email}', '{$comment_content}')";
 
-                            if(!$addComment) {
+                                $addComment = mysqli_query($connection, $query);
 
-                                die('QUERY FAILED: ' . mysqli_error($connection));
+                                if(!$addComment) {
+
+                                    die('QUERY FAILED: ' . mysqli_error($connection));
+
+                                } else {
+
+                                    $query = "UPDATE posts SET post_comment_count = post_comment_count + 1 ";
+                                    $query .= "WHERE post_id = $post_id ";
+
+                                    $updatePostCommentCount = mysqli_query($connection, $query);
+                                    if(!$updatePostCommentCount) {
+                                        die('QUERY FAILED: ' . mysqli_error($connection));
+                                    }
+                                }
 
                             } else {
 
-                                $query = "UPDATE posts SET post_comment_count = post_comment_count + 1 ";
-                                $query .= "WHERE post_id = $post_id ";
+                                echo "<script>alert('Fields cannot be empty')</script>";
 
-                                $updatePostCommentCount = mysqli_query($connection, $query);
-                                if(!$updatePostCommentCount) {
-                                    die('QUERY FAILED: ' . mysqli_error($connection));
-                                }
                             }
                         }
 

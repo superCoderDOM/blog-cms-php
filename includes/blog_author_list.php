@@ -1,21 +1,21 @@
 <!-- Blog Post -->
 <?php
 
-    // Fetch all posts with tags like search keyword
-    $search =  $_POST['search'];
+    // Fetch all posts with requested category ID
     $query = "SELECT * FROM posts 
-        WHERE post_tags LIKE '%$search%' 
-        AND post_status = 'Published'
+        WHERE post_author = '{$post_author}' 
+        AND post_status = 'Published' 
         ORDER BY post_id DESC";
-    $selectPostsByTags = mysqli_query($connection, $query);
 
-    if(!$selectPostsByTags) {
+    $selectPostsByAuthor = mysqli_query($connection, $query);
+
+    if(!$selectPostsByAuthor) {
 
         die("QUERY FAILED: " . mysqli_error($connection));
 
     } else {
 
-        $count = mysqli_num_rows($selectPostsByTags);
+        $count = mysqli_num_rows($selectPostsByAuthor);
 
         if($count == 0) {
 
@@ -23,7 +23,7 @@
 
         } else {
 
-            while($row = mysqli_fetch_assoc($selectPostsByTags)) {
+            while($row = mysqli_fetch_assoc($selectPostsByAuthor)) {
 
                 // Save required fields to variables
                 $post_id = $row['post_id'];

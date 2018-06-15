@@ -40,6 +40,13 @@
                     include './includes/blog_category_list.php';
                 }
             }
+
+        }elseif(isset($_GET['post_author']) && isset($_GET['post_id'])) {
+            $post_author = $_GET['post_author'];
+            $post_id = $_GET['post_id'];
+
+            include './includes/blog_author_list.php';
+
         } else {
 
             ?>
