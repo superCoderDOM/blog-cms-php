@@ -326,6 +326,7 @@
             $post_content = $row['post_content'];
             $post_tags = $row['post_tags'];
             $post_comment_count = $row['post_comment_count'];
+            $post_view_count = $row['post_view_count'];
             $post_status = $row['post_status'];
 
             // Fecth category title
@@ -347,11 +348,13 @@
                 echo "<td> {$post_status} </td>";
                 echo "<td><img src='../images/{$post_image}' alt='{$post_title}' width='50px'></td>";
                 echo "<td> {$post_tags} </td>";
+                echo "<td> {$post_view_count} </td>";
                 echo "<td> {$post_comment_count} </td>";
                 echo "<td> {$post_date} </td>";
                 echo "<td><a href='../post.php?post_id={$post_id}'> View </a></td>";
-                echo "<td><a href='./posts.php?source=edit_post&edit_post_id={$post_id}'>Edit</a></td>";
-                echo "<td><a href='./posts.php?delete_post_id={$post_id}' onClick=\"javascript: return confirm('Are you sure you want to DELETE this post?');\">Delete</a></td>";
+                echo "<td><a href='./posts.php?source=edit_post&edit_post_id={$post_id}'> Edit </a></td>";
+                echo "<td><a href='./posts.php?delete_post_id={$post_id}' onClick=\"javascript: return confirm('Are you sure you want to DELETE this post?');\"> Delete </a></td>";
+                echo "<td><a href='./posts.php?reset_post_id={$post_id}'> Reset </a></td>";
             echo "</tr>";
         }
     }
@@ -412,12 +415,25 @@
 
         global $connection;
 
-            $query = "UPDATE posts SET post_status = '{$post_status}' ";
-            $query .= "WHERE post_id = '{$post_id}' ";
-
+            $query = "UPDATE posts SET post_status = '{$post_status}' WHERE post_id = '{$post_id}'";
             $updatePostStatusByID = mysqli_query($connection, $query);
             confirmQuery($updatePostStatusByID);
             header("Location: ./posts.php");  // forces page reload
+    }
+
+    function resetPostViews() {
+
+        global $connection;
+
+        if(isset($_GET['reset_post_id'])) {
+
+            $post_id = mysqli_real_escape_string($connection, $_GET['reset_post_id']);
+
+            $query = "UPDATE posts SET post_view_count = 0 WHERE post_id = '{$post_id}'";
+            $resetPostViewsByID = mysqli_query($connection, $query);
+            confirmQuery($resetPostViewsByID);
+            header("Location: ./posts.php");  // forces page reload
+        }
     }
 
     // DELETE

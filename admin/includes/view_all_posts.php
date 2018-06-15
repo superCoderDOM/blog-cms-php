@@ -58,16 +58,21 @@
                 <th> Status </th>
                 <th> Image </th>
                 <th> Tags </th>
+                <th> Views </th>
                 <th> Comments </th>
                 <th> Date </th>
                 <th> View Post </th>
                 <th> Edit </th>
                 <th> Delete </th>
+                <th> Reset Views </th>
             </tr>
         </thead>
         <tbody>
-            <?php fetchAllPosts(); ?>
-            <?php deletePost(); ?>
+            <?php 
+                fetchAllPosts();
+                deletePost();
+                resetPostViews();
+            ?>
         </tbody>
     </table>
 </form>
