@@ -41,9 +41,15 @@
                 }
             }
 
-        }elseif(isset($_GET['post_author']) && isset($_GET['post_id'])) {
+        }elseif(isset($_GET['post_author'])) {
             $post_author = $_GET['post_author'];
-            $post_id = $_GET['post_id'];
+
+            ?>
+            <h1 class="page-header">
+                Blog Posts
+                <small>written by <?php echo $post_author; ?></small>
+            </h1>
+            <?php
 
             include './includes/blog_author_list.php';
 
