@@ -1,14 +1,22 @@
 <!-- Blog Entries Column -->
 <div class="col-md-8">
 
-    
     <?php 
-        if(isset($_POST['search_submit']) && isset($_POST['search'])) {
+
+        $postsPerPage = 5;
+
+        if((isset($_POST['search_submit']) && isset($_POST['search'])) || isset($_GET['search'])) {
+
+            if(isset($_POST['search'])) {
+                $search = $_POST['search'];
+            } else {
+                $search = $_GET['search'];
+            }
 
             ?>
                 <h1 class="page-header">
                     Blog Posts
-                    <small>related to <?php echo $_POST['search']; ?></small>
+                    <small>related to <?php echo $search; ?></small>
                 </h1>
             <?php
 
@@ -66,6 +74,4 @@
 
         }
     ?>
-    <?php include './includes/pager.php'; ?>
-
 </div>
