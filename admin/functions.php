@@ -19,43 +19,58 @@
     // Fetch Current Number of Online Users
     function onlineUserCount() {
 
-        global $connection;
+        if(isset($_GET['onlineUsers'])) {
 
-        $session = session_id();
-        $time = time();
-        $time_out_in_seconds = 60;
-        $time_out = $time - $time_out_in_seconds;
+            global $connection;
 
-        $query = "SELECT * FROM users_online WHERE session_code = '$session'";
-        $findUserSession = mysqli_query($connection, $query);
-        if(confirmQuery($findUserSession)) {
+            if(!$connection) {
 
-            $count = mysqli_num_rows($findUserSession);
+                require '../vendor/autoload.php';
+                $dotenv = new Dotenv\Dotenv('../');
+                $dotenv->load();
+                $dotenv->required(['DB_HOST', 'DB_DATABASE', 'DB_USERNAME', 'DB_PASSWORD']);
 
-            if($count == NULL) {
-
-                mysqli_query($connection, "INSERT INTO users_online(session_code, session_start_time) VALUES('{$session}', '{$time}')");
-
-            } else {
-
-                mysqli_query($connection, "UPDATE users_online SET session_start_time = '{$time}' WHERE session_code = '{$session}'");
+                session_start();
+                include "../includes/db.php";
             }
-
-            $findOnlineUsers = mysqli_query($connection, "SELECT * FROM users_online WHERE session_start_time > '{$time_out}'");
-            if(confirmQuery($findOnlineUsers)) {
-
-                return mysqli_num_rows($findOnlineUsers);
-
+    
+            $session = session_id();
+            $time = time();
+            $time_out_in_seconds = 5;
+            $time_out = $time - $time_out_in_seconds;
+    
+            $query = "SELECT * FROM users_online WHERE session_code = '$session'";
+            $findUserSession = mysqli_query($connection, $query);
+            if(confirmQuery($findUserSession)) {
+    
+                $count = mysqli_num_rows($findUserSession);
+    
+                if($count == NULL) {
+    
+                    mysqli_query($connection, "INSERT INTO users_online(session_code, session_start_time) VALUES('{$session}', '{$time}')");
+    
+                } else {
+    
+                    mysqli_query($connection, "UPDATE users_online SET session_start_time = '{$time}' WHERE session_code = '{$session}'");
+                }
+    
+                $findOnlineUsers = mysqli_query($connection, "SELECT * FROM users_online WHERE session_start_time > '{$time_out}'");
+                if(confirmQuery($findOnlineUsers)) {
+    
+                    echo mysqli_num_rows($findOnlineUsers);
+    
+                } else {
+    
+                    echo 0;
+                }
+    
             } else {
-
-                return 0;
+    
+                echo 0;
             }
-
-        } else {
-
-            return 0;
         }
     }
+    onlineUserCount();
 
     /*----------------------------------+
     |           CATEGORIES              |

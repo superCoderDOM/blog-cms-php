@@ -27,6 +27,18 @@ $(document).ready(function(){
     $("#load-screen").delay(700).fadeOut(600, function(){
         $(this).remove();
     });
-
 });
 
+// Live Online User Update
+function loadUsersOnline() {
+
+    $.get("functions.php?onlineUsers=result", function(data) {
+        $(".users-online").text(data);
+    });
+};
+
+setInterval(function(){
+
+    loadUsersOnline();
+
+}, 500);
