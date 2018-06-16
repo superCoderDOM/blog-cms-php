@@ -6,9 +6,54 @@
         global $connection;
 
         if(!$result) {
+
             die('QUERY FAILED: ' . mysqli_error($connection));
+            return false;
+
         } else {
+
             return true;
+        }
+    }
+
+    // Fetch Current Number of Online Users
+    function onlineUserCount() {
+
+        global $connection;
+
+        $session = session_id();
+        $time = time();
+        $time_out_in_seconds = 60;
+        $time_out = $time - $time_out_in_seconds;
+
+        $query = "SELECT * FROM users_online WHERE session_code = '$session'";
+        $findUserSession = mysqli_query($connection, $query);
+        if(confirmQuery($findUserSession)) {
+
+            $count = mysqli_num_rows($findUserSession);
+
+            if($count == NULL) {
+
+                mysqli_query($connection, "INSERT INTO users_online(session_code, session_start_time) VALUES('{$session}', '{$time}')");
+
+            } else {
+
+                mysqli_query($connection, "UPDATE users_online SET session_start_time = '{$time}' WHERE session_code = '{$session}'");
+            }
+
+            $findOnlineUsers = mysqli_query($connection, "SELECT * FROM users_online WHERE session_start_time > '{$time_out}'");
+            if(confirmQuery($findOnlineUsers)) {
+
+                return mysqli_num_rows($findOnlineUsers);
+
+            } else {
+
+                return 0;
+            }
+
+        } else {
+
+            return 0;
         }
     }
 
@@ -35,8 +80,7 @@
                 // Clean potential malicious SQL injections
                 $cat_title = mysqli_real_escape_string($connection, $cat_title);
 
-                $query = "INSERT INTO categories(cat_title) ";
-                $query .= "VALUE('$cat_title') ";
+                $query = "INSERT INTO categories(cat_title) VALUE('$cat_title') ";
 
                 $createCategory = mysqli_query($connection, $query);
                 confirmQuery($createCategory);

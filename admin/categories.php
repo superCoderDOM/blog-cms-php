@@ -10,7 +10,7 @@
 
     <title>CMS Admin - Categories</title>
 
-    <?php include "./includes/admin_metaLink.php"; ?>
+    <?php include "./includes/admin_meta_link.php"; ?>
 
 </head>
 

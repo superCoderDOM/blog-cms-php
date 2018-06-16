@@ -122,8 +122,7 @@
     </div>
 </div>
 
-<hr>
-
+<!-- Google Chart -->
 <?php
 
     $query = "SELECT * FROM posts WHERE post_status = 'Published'";
@@ -144,7 +143,6 @@
 
 ?>
 
-<!-- Google Chart -->
 <div class="row">
     <div class="col-12">
         <script type="text/javascript">
