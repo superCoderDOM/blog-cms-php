@@ -43,14 +43,7 @@
                 </div>
                 <div class="form-group">
                     <label for="user_password">Password</label>
-                    <input type="password" class="form-control" name="user_password" value="<?php echo $user_password; ?>">
-                </div>
-                <div class="form-group">
-                    <label for="user_role">Role</label>
-                    <select name="user_role" id="user_role" class="form-control">
-                        <option value='subscriber' <?php echo ($user_role === 'subscriber' ? 'selected' : '') ?> >Subscriber</option>
-                        <option value='admin' <?php echo ($user_role === 'admin' ? 'selected' : ''); ?> >Admin</option>
-                    </select>
+                    <input type="password" class="form-control" name="user_password" value="" autocomplete="off">
                 </div>
                 <div class="form-group">
                     <input type="submit" name="update_user" class="btn btn-primary" value="Update Profile">

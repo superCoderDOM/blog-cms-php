@@ -9,7 +9,7 @@
                 <input type="email" name="user_email" class="form-control" placeholder="Enter your email">
             </div>
             <div class="input-group">
-                <input type="password" name="user_password" class="form-control" placeholder="Enter your password">
+                <input type="password" name="user_password" class="form-control" placeholder="Enter your password" autocomplete="off">
                 <span class="input-group-btn">
                     <button class="btn btn-primary" name="login" type="submit"> Login </button>
                 </span>

@@ -30,9 +30,7 @@
 
             while($row = mysqli_fetch_assoc($selectUserByID)) {
 
-                $hashed_password = crypt($user_password, $row['user_password']);
-
-                if($user_email === $row['user_email'] && $hashed_password === $row['user_password']) {
+                if(password_verify($user_password, $row['user_password'])) {
 
                     // $_SESSION['user_id'] = $row['$user_id'];
                     $_SESSION['username'] = $row['username'];

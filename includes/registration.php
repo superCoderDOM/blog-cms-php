@@ -21,26 +21,14 @@
                                 $user_password = mysqli_real_escape_string($connection, $user_password);
                                 $user_role = mysqli_real_escape_string($connection, $user_role);
 
-                                $query = "SELECT randSalt FROM users";
-                                $selectRandSalt = mysqli_query($connection, $query);
+                                $hashed_password = password_hash($user_password, PASSWORD_BCRYPT, array('cost' => 12));
 
-                                if(!$selectRandSalt) {
+                                $query = "INSERT INTO users(username, user_email, user_password, user_role) ";
+                                $query .= "VALUES('{$username}', '{$user_email}', '{$hashed_password}', '{$user_role}')";
 
-                                    die("Query Failed: " . mysqli_error($conneciton));
-
-                                } else {
-
-                                    $row = mysqli_fetch_assoc($selectRandSalt);
-                                    $salt = $row['randSalt'];
-                                    $hashed_password = crypt($user_password, $salt);
-
-                                    $query = "INSERT INTO users(username, user_email, user_password, user_role) ";
-                                    $query .= "VALUES('{$username}', '{$user_email}', '{$hashed_password}', '{$user_role}')";
-    
-                                    $addUser = mysqli_query($connection, $query);
-                                    echo "<p class='bg-success'> New user created: {$username} </p>";
-                                    // header("Location: ./index.php");  // forces page reload
-                                }
+                                $addUser = mysqli_query($connection, $query);
+                                echo "<p class='bg-success'> New user created: {$username} </p>";
+                                // header("Location: ./index.php");  // forces page reload
 
                             } else {
 
@@ -60,7 +48,7 @@
                         </div>
                          <div class="form-group">
                             <label for="password" class="sr-only">Password</label>
-                            <input type="password" name="password" id="key" class="form-control" placeholder="Password">
+                            <input type="password" name="password" id="key" class="form-control" placeholder="Password" autocomplete="off">
                         </div>
                 
                         <input type="submit" name="submit_registration" id="btn-login" class="btn btn-primary btn-lg btn-block" value="Register">

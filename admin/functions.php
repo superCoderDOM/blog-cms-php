@@ -546,28 +546,16 @@
             $user_password = mysqli_real_escape_string($connection, $user_password);
             $user_role = mysqli_real_escape_string($connection, $user_role);
 
-            $query = "SELECT randSalt FROM users";
-            $selectRandSalt = mysqli_query($connection, $query);
+            $hashed_password = password_hash($user_password, PASSWORD_BCRYPT, array('cost' => 12));
 
-            if(!$selectRandSalt) {
+            $query = "INSERT INTO users(username, user_firstname, user_lastname, user_email, user_password, user_role) ";
+            $query .= "VALUES('{$username}', '{$user_firstname}', '{$user_lastname}', '{$user_email}', '{$hashed_password}', '{$user_role}')";
 
-                die("Query Failed: " . mysqli_error($conneciton));
-
-            } else {
-
-                $row = mysqli_fetch_assoc($selectRandSalt);
-                $salt = $row['randSalt'];
-                $hashed_password = crypt($user_password, $salt);
-
-                $query = "INSERT INTO users(username, user_firstname, user_lastname, user_email, user_password, user_role) ";
-                $query .= "VALUES('{$username}', '{$user_firstname}', '{$user_lastname}', '{$user_email}', '{$hashed_password}', '{$user_role}')";
-
-                $addUser = mysqli_query($connection, $query);
-                confirmQuery($addUser);
-                echo "<h2>New user created: {$username} </h3>";
-                echo "<a href='./users.php' role='button' class='btn btn-default'> View All Users </a>";
-                // header("Location: ./users.php");  // forces page reload
-            }
+            $addUser = mysqli_query($connection, $query);
+            confirmQuery($addUser);
+            echo "<h2>New user created: {$username} </h3>";
+            echo "<a href='./users.php' role='button' class='btn btn-default'> View All Users </a>";
+            // header("Location: ./users.php");  // forces page reload
         }
     }
 
@@ -611,12 +599,14 @@
 
         if(isset($_POST['update_user'])) {
 
+            //if user currently logged in changes username, $_SESSION is not updated
+
             $username = $_POST['username'];
             $user_firstname = $_POST['user_firstname'];
             $user_lastname = $_POST['user_lastname'];
             $user_email = $_POST['user_email'];
             $user_password = $_POST['user_password'];
-            $user_role = $_POST['user_role'];
+            $user_role = isset($_POST['user_role']) ? $_POST['user_role'] : "";
 
             // Clean potential malicious SQL injections
             $username = mysqli_real_escape_string($connection, $username);
@@ -626,34 +616,30 @@
             $user_password = mysqli_real_escape_string($connection, $user_password);
             $user_role = mysqli_real_escape_string($connection, $user_role);
 
-            $query = "SELECT randSalt FROM users WHERE username = '{$username}'";
-            $selectRandSalt = mysqli_query($connection, $query);
+            $query = "UPDATE users SET ";
+            $query .= "username = '{$username}', ";
+            $query .= "user_firstname = '{$user_firstname}', ";
+            $query .= "user_lastname = '{$user_lastname}', ";
 
-            if(!$selectRandSalt) {
+            if(!empty($user_password)) {
 
-                die("Query Failed: " . mysqli_error($conneciton));
-
-            } else {
-
-                $row = mysqli_fetch_assoc($selectRandSalt);
-                $salt = $row['randSalt'];
-                $hashed_password = crypt($user_password, $salt);
-
-                $query = "UPDATE users SET ";
-                $query .= "username = '{$username}', ";
-                $query .= "user_firstname = '{$user_firstname}', ";
-                $query .= "user_lastname = '{$user_lastname}', ";
-                $query .= "user_email = '{$user_email}', ";
+                $hashed_password = password_hash($user_password, PASSWORD_BCRYPT, array('cost' => 12));
                 $query .= "user_password = '{$hashed_password}', ";
-                $query .= "user_role = '{$user_role}' ";
-                $query .= "WHERE user_id = {$user_id} ";
-
-                $updateUserByID = mysqli_query($connection, $query);
-                confirmQuery($updateUserByID);
-                echo "<p class='bg-success'>User <em>{$username}</em> updated. ";
-                echo "<a href='./users.php'> View All Users </a></p>";
-                // header("Location: ./users.php");  // forces page reload
             }
+
+            if(!empty($user_role)) {
+
+                $query .= "user_role = '{$user_role}', ";
+            }
+
+            $query .= "user_email = '{$user_email}' ";
+            $query .= "WHERE user_id = {$user_id} ";
+
+            $updateUserByID = mysqli_query($connection, $query);
+            confirmQuery($updateUserByID);
+            echo "<p class='bg-success'>User <em>{$username}</em> updated. ";
+            echo "<a href='./users.php'> View All Users </a></p>";
+            // header("Location: ./users.php");  // forces page reload
         }
     }
 
