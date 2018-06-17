@@ -21,19 +21,19 @@
         $user_password = mysqli_real_escape_string($connection, $user_password);
 
         $query = "SELECT * FROM users WHERE user_email = '{$user_email}'";
-        $selectUserByID = mysqli_query($connection, $query);
-        if(!$selectUserByID){
+        $selectUserByEmail = mysqli_query($connection, $query);
+        if(!$selectUserByEmail){
 
             die('QUERY FAILED: ' . mysqli_error($connection));
 
         } else {
 
-            while($row = mysqli_fetch_assoc($selectUserByID)) {
+            while($row = mysqli_fetch_assoc($selectUserByEmail)) {
 
                 if(password_verify($user_password, $row['user_password'])) {
 
-                    // $_SESSION['user_id'] = $row['$user_id'];
-                    $_SESSION['username'] = $row['username'];
+                    $_SESSION['user_id'] = $row['user_id'];
+                    // $_SESSION['username'] = $row['username'];
                     $_SESSION['user_firstname'] = $row['user_firstname'];
                     $_SESSION['user_lastname'] = $row['user_lastname'];
                     // $_SESSION['user_email'] = $row['user_email'];

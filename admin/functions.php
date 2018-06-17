@@ -599,8 +599,6 @@
 
         if(isset($_POST['update_user'])) {
 
-            //if user currently logged in changes username, $_SESSION is not updated
-
             $username = $_POST['username'];
             $user_firstname = $_POST['user_firstname'];
             $user_lastname = $_POST['user_lastname'];
@@ -636,10 +634,27 @@
             $query .= "WHERE user_id = {$user_id} ";
 
             $updateUserByID = mysqli_query($connection, $query);
-            confirmQuery($updateUserByID);
-            echo "<p class='bg-success'>User <em>{$username}</em> updated. ";
-            echo "<a href='./users.php'> View All Users </a></p>";
-            // header("Location: ./users.php");  // forces page reload
+            if(confirmQuery($updateUserByID)) {
+
+                if($user_id == $_SESSION['user_id']) {
+
+                    $query = "SELECT * FROM users WHERE user_id = '{$user_id}'";
+                    $selectUserByID = mysqli_query($connection, $query);
+                    if(confirmQuery($selectUserByID)) {
+
+                        while($row = mysqli_fetch_assoc($selectUserByID)) {
+
+                            $_SESSION['user_id'] = $row['user_id'];
+                            $_SESSION['user_firstname'] = $row['user_firstname'];
+                            $_SESSION['user_lastname'] = $row['user_lastname'];
+                            $_SESSION['user_role'] = $row['user_role'];
+                        }
+                    }
+                }
+                echo "<p class='bg-success'>User <em>{$username}</em> updated. ";
+                echo "<a href='./users.php'> View All Users </a></p>";
+                // header("Location: ./users.php");  // forces page reload
+            }
         }
     }
 
