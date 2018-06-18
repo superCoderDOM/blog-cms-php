@@ -143,7 +143,7 @@
     
             $updateCategoryByID = mysqli_query($connection, $query);
             confirmQuery($updateCategoryByID);
-            header("Location: ./categories.php");  // forces page reload
+            header("Location: ./categories.php");
         }
     }
 
@@ -158,7 +158,7 @@
             $query = "DELETE FROM categories WHERE cat_id = {$cat_id}";
             $deleteCategoryByID = mysqli_query($connection, $query);
             confirmQuery($deleteCategoryByID);
-            header("Location: ./categories.php");  // forces page reload
+            header("Location: ./categories.php");
         }
     }
 
@@ -195,7 +195,7 @@
 
                 $addComment = mysqli_query($connection, $query);
                 confirmQuery($addcomment);
-                header("Location: ./posts.php?post_id={$comment_post_id}");  // forces page reload
+                header("Location: ./posts.php?post_id={$comment_post_id}");
 
             } else {
 
@@ -388,7 +388,7 @@
             confirmQuery($addPost);
 
             // echo "<p class='bg-success'>Post Created. <a href='../post.php?post_id={$post_id}'> View Post </a> or <a href='./posts.php'> View All Posts </a></p>";
-            header("Location: ./posts.php");  // forces page reload
+            header("Location: ./posts.php");
         }
     }
 
@@ -422,7 +422,7 @@
     
             $addPost = mysqli_query($connection, $query);
             confirmQuery($addPost);
-            header("Location: ./posts.php");  // forces page reload
+            header("Location: ./posts.php");
         }
     }
 
@@ -433,6 +433,7 @@
 
         $query = "SELECT * FROM posts ORDER BY post_id DESC";
         $allPosts = mysqli_query($connection, $query);
+        confirmQuery($allPosts);
 
         while($row = mysqli_fetch_assoc($allPosts)) {
 
@@ -452,8 +453,7 @@
             $findUserAuthor = mysqli_query($connection, $query);
             confirmQuery($findUserAuthor);
             $row = mysqli_fetch_assoc($findUserAuthor);
-            $author_firstname = $row['user_firstname'];
-            $author_lastname = $row['user_lastname'];
+            $post_author_name = $row['user_firstname'] . " " . $row['user_lastname'];
 
             // Fecth category title
             $query = "SELECT * FROM categories WHERE cat_id = {$post_category_id}";
@@ -472,7 +472,7 @@
             echo "<tr>";
                 echo "<td><input type='checkbox' class='checkBoxes' name='checkBoxArray[]' value='{$post_id}'></td>";
                 echo "<td> {$post_id} </td>";
-                echo "<td> {$author_firstname} {$author_lastname}</td>";
+                echo "<td><a href='./posts.php?author_id={$post_author_id}'> {$post_author_name} </a></td>";
                 echo "<td><a href='../post.php?post_id={$post_id}'> {$post_title} </a></td>";
                 echo "<td> {$post_category_title} </td>";
                 echo "<td> {$post_status} </td>";
@@ -485,6 +485,68 @@
                 echo "<td><a href='./posts.php?source=edit_post&edit_post_id={$post_id}'> Edit </a></td>";
                 echo "<td><a href='./posts.php?delete_post_id={$post_id}' onClick=\"javascript: return confirm('Are you sure you want to DELETE this post?');\"> Delete </a></td>";
                 echo "<td><a href='./posts.php?reset_post_id={$post_id}'> Reset </a></td>";
+            echo "</tr>";
+        }
+    }
+
+    function fetchPostsByAuthorID($post_author_id) {
+
+        global $connection;
+
+        $query = "SELECT * FROM posts WHERE post_author_id = $post_author_id ORDER BY post_id DESC";
+        $fetchPostsByAuthorID = mysqli_query($connection, $query);
+        confirmQuery($fetchPostsByAuthorID);
+
+        while($row = mysqli_fetch_assoc($fetchPostsByAuthorID)) {
+
+            $post_id = $row['post_id'];
+            $post_category_id = $row['post_category_id'];
+            $post_title = $row['post_title'];
+            $post_author_id = $row['post_author_id'];
+            $post_date = $row['post_date'];
+            $post_image = $row['post_image'];
+            $post_content = $row['post_content'];
+            $post_tags = $row['post_tags'];
+            $post_view_count = $row['post_view_count'];
+            $post_status = $row['post_status'];
+
+            // Fetch author name
+            $query = "SELECT * FROM users WHERE user_id = $post_author_id";
+            $findUserAuthor = mysqli_query($connection, $query);
+            confirmQuery($findUserAuthor);
+            $row = mysqli_fetch_assoc($findUserAuthor);
+            $post_author_name = $row['user_firstname'] . " " . $row['user_lastname'];
+
+            // Fecth category title
+            $query = "SELECT * FROM categories WHERE cat_id = {$post_category_id}";
+            $selectCategoryByID = mysqli_query($connection, $query);
+            confirmQuery($selectCategoryByID);
+            $row = mysqli_fetch_assoc($selectCategoryByID);
+            $post_category_title = $row['cat_title'];
+
+            // Fetch comment count
+            $query = "SELECT * FROM comments WHERE comment_post_id = '{$post_id}'";
+            $findCommentsByPostID = mysqli_query($connection, $query);
+            confirmQuery($findCommentsByPostID);
+            $commentCount = mysqli_num_rows($findCommentsByPostID);
+
+            // Display results as table row
+            echo "<tr>";
+                echo "<td><input type='checkbox' class='checkBoxes' name='checkBoxArray[]' value='{$post_id}'></td>";
+                echo "<td> {$post_id} </td>";
+                echo "<td><a href='./posts.php?author_id={$post_author_id}'> {$post_author_name} </a></td>";
+                echo "<td><a href='../post.php?post_id={$post_id}'> {$post_title} </a></td>";
+                echo "<td> {$post_category_title} </td>";
+                echo "<td> {$post_status} </td>";
+                echo "<td><img src='../images/{$post_image}' alt='{$post_title}' width='50px'></td>";
+                echo "<td> {$post_tags} </td>";
+                echo "<td> {$post_view_count} </td>";
+                echo "<td><a href='./comments.php?post_id={$post_id}'> {$commentCount} </a></td>";
+                echo "<td> {$post_date} </td>";
+                echo "<td><a href='../post.php?post_id={$post_id}'> View </a></td>";
+                echo "<td><a href='./posts.php?source=edit_post&edit_post_id={$post_id}'> Edit </a></td>";
+                echo "<td><a href='./posts.php?delete_post_id={$post_id}&author_id={$post_author_id}' onClick=\"javascript: return confirm('Are you sure you want to DELETE this post?');\"> Delete </a></td>";
+                echo "<td><a href='./posts.php?reset_post_id={$post_id}&author_id={$post_author_id}'> Reset </a></td>";
             echo "</tr>";
         }
     }
@@ -537,7 +599,7 @@
             confirmQuery($updatePostByID);
 
             echo "<p class='bg-success'>Post Updated. <a href='../post.php?post_id={$post_id}'> View Post </a> or <a href='./posts.php'> Edit More Posts </a></p>";
-            // header("Location: ./posts.php");  // forces page reload
+            // header("Location: ./posts.php");
         }
     }
 
@@ -545,10 +607,18 @@
 
         global $connection;
 
-            $query = "UPDATE posts SET post_status = '{$post_status}' WHERE post_id = '{$post_id}'";
-            $updatePostStatusByID = mysqli_query($connection, $query);
-            confirmQuery($updatePostStatusByID);
-            header("Location: ./posts.php");  // forces page reload
+        $query = "UPDATE posts SET post_status = '{$post_status}' WHERE post_id = '{$post_id}'";
+        $updatePostStatusByID = mysqli_query($connection, $query);
+        confirmQuery($updatePostStatusByID);
+        if(isset($_GET['author_id'])) {
+
+            $author_id = mysqli_real_escape_string($connection, $_GET['author_id']);
+            header("Location: ./posts.php?author_id={$author_id}");
+
+        } else {
+
+            header("Location: ./posts.php");
+        }
     }
 
     function resetPostViews() {
@@ -562,7 +632,15 @@
             $query = "UPDATE posts SET post_view_count = 0 WHERE post_id = '{$post_id}'";
             $resetPostViewsByID = mysqli_query($connection, $query);
             confirmQuery($resetPostViewsByID);
-            header("Location: ./posts.php");  // forces page reload
+            if(isset($_GET['author_id'])) {
+
+                $author_id = mysqli_real_escape_string($connection, $_GET['author_id']);
+                header("Location: ./posts.php?author_id={$author_id}");
+    
+            } else {
+    
+                header("Location: ./posts.php");
+            }
         }
     }
 
@@ -577,7 +655,15 @@
             $query = "DELETE FROM posts WHERE post_id = {$post_id}";
             $deletePostByID = mysqli_query($connection, $query);
             confirmQuery($deletePostByID);
-            header("Location: ./posts.php");  // forces page reload
+            if(isset($_GET['author_id'])) {
+
+                $author_id = mysqli_real_escape_string($connection, $_GET['author_id']);
+                header("Location: ./posts.php?author_id={$author_id}");
+    
+            } else {
+    
+                header("Location: ./posts.php");
+            }
         }
     }
 
@@ -588,7 +674,15 @@
         $query = "DELETE FROM posts WHERE post_id = {$post_id}";
         $deletePostByID = mysqli_query($connection, $query);
         confirmQuery($deletePostByID);
-        header("Location: ./posts.php");  // forces page reload
+        if(isset($_GET['author_id'])) {
+
+            $author_id = mysqli_real_escape_string($connection, $_GET['author_id']);
+            header("Location: ./posts.php?author_id={$author_id}");
+
+        } else {
+
+            header("Location: ./posts.php");
+        }
     }
 
     /*-----------------------------+
@@ -626,7 +720,7 @@
             confirmQuery($addUser);
             echo "<h2>New user created: {$username} </h3>";
             echo "<a href='./users.php' role='button' class='btn btn-default'> View All Users </a>";
-            // header("Location: ./users.php");  // forces page reload
+            // header("Location: ./users.php");
         }
     }
 
@@ -724,7 +818,7 @@
                 }
                 echo "<p class='bg-success'>User <em>{$username}</em> updated. ";
                 echo "<a href='./users.php'> View All Users </a></p>";
-                // header("Location: ./users.php");  // forces page reload
+                // header("Location: ./users.php");
             }
         }
     }
@@ -749,7 +843,7 @@
             $query = "UPDATE users SET user_role = '{$user_role}' WHERE user_id = {$user_id}";
             $updateUserByID = mysqli_query($connection, $query);
             confirmQuery($updateUserByID);
-            header("Location: ./users.php");  // forces page reload
+            header("Location: ./users.php");
         }
     }
 
@@ -764,7 +858,7 @@
             $query = "DELETE FROM users WHERE user_id = {$user_id}";
             $deleteUserByID = mysqli_query($connection, $query);
             confirmQuery($deleteUserByID);
-            header("Location: ./users.php");  // forces page reload
+            header("Location: ./users.php");
         }
     }
 

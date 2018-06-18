@@ -4,8 +4,6 @@
 
         foreach($_POST['checkBoxArray'] as $post_id) {
 
-            // echo "$checkBoxValue";
-
             $bulk_option = $_POST['bulk_option'];
 
             switch($bulk_option) {
@@ -69,7 +67,15 @@
         </thead>
         <tbody>
             <?php 
-                fetchAllPosts();
+                if(isset($_GET['author_id'])) {
+
+                    $author_id = mysqli_real_escape_string($connection, $_GET['author_id']);
+                    fetchPostsByAuthorID($author_id);
+
+                } else {
+
+                    fetchAllPosts();
+                }
                 deletePost();
                 resetPostViews();
             ?>
