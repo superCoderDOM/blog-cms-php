@@ -25,19 +25,24 @@
                     $post_id = $row['post_id'];
                     $post_category_id = $row['post_category_id'];
                     $post_title = $row['post_title'];
-                    $post_author = $row['post_author'];
+                    $post_author_id = $row['post_author_id'];
                     $post_date = strtotime($row['post_date']);
                     $post_image = $row['post_image'];
                     $post_content = $row['post_content'];
                     $post_tags = $row['post_tags'];
-                    $post_comment_count = $row['post_comment_count'];
                     $post_status = $row['post_status'];
-        
+
+                    // Fetch author name
+                    $query = "SELECT * FROM users WHERE user_id = $post_author_id";
+                    $findUserAuthor = mysqli_query($connection, $query);
+                    $row = mysqli_fetch_assoc($findUserAuthor);
+                    $post_author_name = $row['user_firstname'] . " " . $row['user_lastname'];
+
                     ?>
-        
+
                     <!-- Blog Post Content Column -->
                     <div class="col-lg-8">
-        
+
                         <!-- Blog Post -->
         
                         <!-- Title -->
@@ -56,7 +61,7 @@
         
                             <!-- Author -->
                             <p class="lead">
-                                by <a href="./index.php?post_author=<?php echo $post_author; ?>"><?php echo $post_author; ?></a>
+                                by <a href="./index.php?post_author_id=<?php echo $post_author_id; ?>"><?php echo $post_author_name; ?></a>
                             </p>
         
                             <hr>
@@ -88,13 +93,10 @@
                                     $comment_author = $_POST['comment_author'];
                                     $comment_email = $_POST['comment_email'];
                                     $comment_content = $_POST['comment_content'];
-                                    // $comment_status = 'Submitted';
-                                    // $comment_date = date('d-m-y');
         
                                     if(!empty($comment_author) && !empty($comment_email) && !empty($comment_content)) {
         
                                         // Clean potential malicious SQL injections
-                                        $username = mysqli_real_escape_string($connection, $username);
                                         $comment_post_id = mysqli_real_escape_string($connection, $comment_post_id);
                                         $comment_author = mysqli_real_escape_string($connection, $comment_author);
                                         $comment_email = mysqli_real_escape_string($connection, $comment_email);
@@ -107,15 +109,6 @@
 
                                             die('QUERY FAILED: ' . mysqli_error($connection));
 
-                                        } else {
-
-                                            $query = "UPDATE posts SET post_comment_count = post_comment_count + 1 ";
-                                            $query .= "WHERE post_id = $post_id ";
-
-                                            $updatePostCommentCount = mysqli_query($connection, $query);
-                                            if(!$updatePostCommentCount) {
-                                                die('QUERY FAILED: ' . mysqli_error($connection));
-                                            }
                                         }
 
                                     } else {

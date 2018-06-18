@@ -9,8 +9,6 @@
         <label for="post_category_id">Post Category</label>
         <select name="post_category_id" id="post_category_id" class="form-control">
             <?php 
-            
-                // Find and display all categories
                 $query = "SELECT * FROM categories";
                 $allCategories = mysqli_query($connection, $query);
                 confirmQuery($allCategories);
@@ -26,11 +24,26 @@
         </select>
     </div>
     <div class="form-group">
-        <label for="post_author">Post Author</label>
-        <input type="text" class="form-control" name="post_author">
+        <label for="post_author_id">Post Author</label>
+        <select name="post_author_id" id="post_author_id" class="form-control">
+            <?php 
+                $query = "SELECT * FROM users";
+                $allUsers = mysqli_query($connection, $query);
+                confirmQuery($allUsers);
+
+                while($row = mysqli_fetch_assoc($allUsers)) {
+
+                    $user_id = $row['user_id'];
+                    $user_firstname = $row['user_firstname'];
+                    $user_lastname = $row['user_lastname'];
+
+                    echo "<option value='{$user_id}'>{$user_firstname} {$user_lastname}<?option>";
+                }
+            ?>
+        </select>
     </div>
     <div class="form-group">
-        <label for="post_author">Post Status</label>
+        <label for="post_author_id">Post Status</label>
         <select class="form-control" name="post_status">
             <option value="Draft">Draft</option>
             <option value="Published">Published</option>

@@ -247,6 +247,50 @@
         }
     }
 
+    function fetchCommentsByPostID($post_id) {
+
+        global $connection;
+
+        $query = "SELECT * FROM comments WHERE comment_post_id = '{$post_id}' ORDER BY comment_id DESC";
+        $selectCommentsByPostID = mysqli_query($connection, $query);
+        confirmQuery($selectCommentsByPostID);
+
+        while($row = mysqli_fetch_assoc($selectCommentsByPostID)) {
+
+            $comment_id = $row['comment_id'];
+            $comment_post_id = $row['comment_post_id'];
+            $comment_author = $row['comment_author'];
+            $comment_email = $row['comment_email'];
+            $comment_content = $row['comment_content'];
+            $comment_status = $row['comment_status'];
+            $comment_date = $row['comment_date'];
+
+            // Fecth post title
+            $query = "SELECT * FROM posts WHERE post_id = {$comment_post_id}";
+            $selectPostByID = mysqli_query($connection, $query);
+            confirmQuery($selectPostByID);
+        
+            while($row = mysqli_fetch_assoc($selectPostByID)) {
+        
+                $comment_post_title = $row['post_title'];
+
+                // Display results as table row
+                echo "<tr>";
+                    echo "<td> {$comment_id} </td>";
+                    echo "<td><a href='../post.php?post_id={$comment_post_id}'> {$comment_post_title} </a></td>";
+                    echo "<td> {$comment_author} </td>";
+                    echo "<td> {$comment_email} </td>";
+                    echo "<td> {$comment_content} </td>";
+                    echo "<td> {$comment_status} </td>";
+                    echo "<td> {$comment_date} </td>";
+                    echo "<td><a href='./comments.php?post_id={$post_id}&approve_comment_id={$comment_id}'>Approve</a></td>";
+                    echo "<td><a href='./comments.php?post_id={$post_id}&reject_comment_id={$comment_id}'>Reject</a></td>";
+                    echo "<td><a href='./comments.php?post_id={$post_id}&delete_comment_id={$comment_id}'>Delete</a></td>";
+                echo "</tr>";
+            }
+        }
+    }
+
     // UPDATE
     function updateCommentStatus() {
 
@@ -270,7 +314,16 @@
 
             $updateCommentStatusByID = mysqli_query($connection, $query);
             confirmQuery($updateCommentStatusByID);
-            header("Location: ./comments.php");  // forces page reload
+
+            if(isset($_GET['post_id'])) {
+
+                $post_id = mysqli_real_escape_string($connection, $_GET['post_id']);
+                header("Location: ./comments.php?post_id={$post_id}");
+
+            } else {
+
+                header("Location: ./comments.php");
+            }
         }
     }
 
@@ -285,7 +338,16 @@
             $query = "DELETE FROM comments WHERE comment_id = {$comment_id}";
             $deleteCommentByID = mysqli_query($connection, $query);
             confirmQuery($deleteCommentByID);
-            header("Location: ./comments.php");  // forces page reload
+
+            if(isset($_GET['post_id'])) {
+
+                $post_id = mysqli_real_escape_string($connection, $_GET['post_id']);
+                header("Location: ./comments.php?post_id={$post_id}");
+
+            } else {
+
+                header("Location: ./comments.php");
+            }
         }
     }
 
@@ -302,7 +364,7 @@
             
             $post_title = $_POST['post_title'];
             $post_category_id = $_POST['post_category_id'];
-            $post_author = $_POST['post_author'];
+            $post_author_id = $_POST['post_author_id'];
             $post_status = $_POST['post_status'];
 
             $post_image = $_FILES['post_image']['name'];
@@ -310,19 +372,17 @@
 
             $post_tags = $_POST['post_tags'];
             $post_content = $_POST['post_content'];
-            // $post_date = date('d-m-y');
-            // $post_comment_count = 0;
 
             // Clean potential malicious SQL injections
             $post_title = mysqli_real_escape_string($connection, $post_title);
-            $post_author = mysqli_real_escape_string($connection, $post_author);
+            $post_author_id = mysqli_real_escape_string($connection, $post_author_id);
             $post_tags = mysqli_real_escape_string($connection, $post_tags);
             $post_content = mysqli_real_escape_string($connection, $post_content);
 
             move_uploaded_file($post_image_temp, "../images/$post_image");
 
-            $query = "INSERT INTO posts(post_category_id, post_title, post_author, post_image, post_content, post_tags, post_status) ";
-            $query .= "VALUES('{$post_category_id}', '{$post_title}', '{$post_author}', '{$post_image}', '{$post_content}', '{$post_tags}', '{$post_status}')";
+            $query = "INSERT INTO posts(post_category_id, post_title, post_author_id, post_image, post_content, post_tags, post_status) ";
+            $query .= "VALUES('{$post_category_id}', '{$post_title}', '{$post_author_id}', '{$post_image}', '{$post_content}', '{$post_tags}', '{$post_status}')";
 
             $addPost = mysqli_query($connection, $query);
             confirmQuery($addPost);
@@ -344,7 +404,7 @@
     
                 $post_category_id = $row['post_category_id'];
                 $post_title = $row['post_title'];
-                $post_author = $row['post_author'];
+                $post_author_id = $row['post_author_id'];
                 $post_date = $row['post_date'];
                 $post_image = $row['post_image'];
                 $post_content = $row['post_content'];
@@ -352,13 +412,13 @@
                 $post_status = $row['post_status'];
 
                 $post_title = mysqli_real_escape_string($connection, $post_title);
-                $post_author = mysqli_real_escape_string($connection, $post_author);
+                $post_author_id = mysqli_real_escape_string($connection, $post_author_id);
                 $post_tags = mysqli_real_escape_string($connection, $post_tags);
                 $post_content = mysqli_real_escape_string($connection, $post_content);
             }
     
-            $query = "INSERT INTO posts(post_category_id, post_title, post_author, post_image, post_content, post_tags, post_status) ";
-            $query .= "VALUES('{$post_category_id}', '{$post_title}', '{$post_author}', '{$post_image}', '{$post_content}', '{$post_tags}', '{$post_status}')";
+            $query = "INSERT INTO posts(post_category_id, post_title, post_author_id, post_image, post_content, post_tags, post_status) ";
+            $query .= "VALUES('{$post_category_id}', '{$post_title}', '{$post_author_id}', '{$post_image}', '{$post_content}', '{$post_tags}', '{$post_status}')";
     
             $addPost = mysqli_query($connection, $query);
             confirmQuery($addPost);
@@ -379,36 +439,47 @@
             $post_id = $row['post_id'];
             $post_category_id = $row['post_category_id'];
             $post_title = $row['post_title'];
-            $post_author = $row['post_author'];
+            $post_author_id = $row['post_author_id'];
             $post_date = $row['post_date'];
             $post_image = $row['post_image'];
             $post_content = $row['post_content'];
             $post_tags = $row['post_tags'];
-            $post_comment_count = $row['post_comment_count'];
             $post_view_count = $row['post_view_count'];
             $post_status = $row['post_status'];
+
+            // Fetch author name
+            $query = "SELECT * FROM users WHERE user_id = $post_author_id";
+            $findUserAuthor = mysqli_query($connection, $query);
+            confirmQuery($findUserAuthor);
+            $row = mysqli_fetch_assoc($findUserAuthor);
+            $author_firstname = $row['user_firstname'];
+            $author_lastname = $row['user_lastname'];
 
             // Fecth category title
             $query = "SELECT * FROM categories WHERE cat_id = {$post_category_id}";
             $selectCategoryByID = mysqli_query($connection, $query);
-        
-            while($row = mysqli_fetch_assoc($selectCategoryByID)) {
+            confirmQuery($selectCategoryByID);
+            $row = mysqli_fetch_assoc($selectCategoryByID);
+            $post_category_title = $row['cat_title'];
 
-                $post_category_title = $row['cat_title'];
-            }
+            // Fetch comment count
+            $query = "SELECT * FROM comments WHERE comment_post_id = '{$post_id}'";
+            $findCommentsByPostID = mysqli_query($connection, $query);
+            confirmQuery($findCommentsByPostID);
+            $commentCount = mysqli_num_rows($findCommentsByPostID);
 
             // Display results as table row
             echo "<tr>";
                 echo "<td><input type='checkbox' class='checkBoxes' name='checkBoxArray[]' value='{$post_id}'></td>";
                 echo "<td> {$post_id} </td>";
-                echo "<td> {$post_author} </td>";
+                echo "<td> {$author_firstname} {$author_lastname}</td>";
                 echo "<td><a href='../post.php?post_id={$post_id}'> {$post_title} </a></td>";
                 echo "<td> {$post_category_title} </td>";
                 echo "<td> {$post_status} </td>";
                 echo "<td><img src='../images/{$post_image}' alt='{$post_title}' width='50px'></td>";
                 echo "<td> {$post_tags} </td>";
                 echo "<td> {$post_view_count} </td>";
-                echo "<td> {$post_comment_count} </td>";
+                echo "<td><a href='./comments.php?post_id={$post_id}'> {$commentCount} </a></td>";
                 echo "<td> {$post_date} </td>";
                 echo "<td><a href='../post.php?post_id={$post_id}'> View </a></td>";
                 echo "<td><a href='./posts.php?source=edit_post&edit_post_id={$post_id}'> Edit </a></td>";
@@ -427,7 +498,7 @@
 
             $post_title = $_POST['post_title'];
             $post_category_id = $_POST['post_category_id'];
-            $post_author = $_POST['post_author'];
+            $post_author_id = $_POST['post_author_id'];
             $post_status = $_POST['post_status'];
             $post_image = $_FILES['post_image']['name'];
             $post_image_temp = $_FILES['post_image']['tmp_name'];
@@ -436,7 +507,7 @@
 
             // Clean potential malicious SQL injections
             $post_title = mysqli_real_escape_string($connection, $post_title);
-            $post_author = mysqli_real_escape_string($connection, $post_author);
+            $post_author_id = mysqli_real_escape_string($connection, $post_author_id);
             $post_tags = mysqli_real_escape_string($connection, $post_tags);
             $post_content = mysqli_real_escape_string($connection, $post_content);
 
@@ -455,7 +526,7 @@
             $query = "UPDATE posts SET ";
             $query .= "post_title = '{$post_title}', ";
             $query .= "post_category_id = '{$post_category_id}', ";
-            $query .= "post_author = '{$post_author}', ";
+            $query .= "post_author_id = '{$post_author_id}', ";
             $query .= "post_status = '{$post_status}', ";
             $query .= "post_image = '{$post_image}', ";
             $query .= "post_tags = '{$post_tags}', ";

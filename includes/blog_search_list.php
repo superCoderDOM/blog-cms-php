@@ -51,19 +51,23 @@
     
                     $post_id = $row['post_id'];
                     $post_title = $row['post_title'];
-                    $post_author = $row['post_author'];
+                    $post_author_id = $row['post_author_id'];
                     $post_date =  strtotime($row['post_date']);
                     $post_image = $row['post_image'];
                     $post_content = substr($row['post_content'], 0, 300);
     
-                    // Display post
+                    // Fetch author name
+                    $query = "SELECT * FROM users WHERE user_id = $post_author_id";
+                    $findUserAuthor = mysqli_query($connection, $query);
+                    $row = mysqli_fetch_assoc($findUserAuthor);
+                    $post_author_name = $row['user_firstname'] . " " . $row['user_lastname'];
                     ?>
     
                     <h2>
                         <a href="./post.php?post_id=<?php echo $post_id; ?>"><?php echo $post_title; ?></a>
                     </h2>
                     <p class="lead">
-                        by <a href="./index.php?post_author=<?php echo $post_author; ?>"><?php echo $post_author; ?></a>
+                        by <a href="./index.php?post_author_id=<?php echo $post_author_id; ?>"><?php echo $post_author_name; ?></a>
                     </p>
                     <p><span class="glyphicon glyphicon-time"></span> Posted on <?php echo date('F j, Y \a\t g:i A', $post_date); ?></p>
                     <hr>

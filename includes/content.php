@@ -49,13 +49,19 @@
                 }
             }
 
-        }elseif(isset($_GET['post_author'])) {
-            $post_author = $_GET['post_author'];
+        }elseif(isset($_GET['post_author_id'])) {
+            $post_author_id = mysqli_real_escape_string($connection, $_GET['post_author_id']);
+
+            // Fetch author name
+            $query = "SELECT * FROM users WHERE user_id = $post_author_id";
+            $findUserAuthor = mysqli_query($connection, $query);
+            $row = mysqli_fetch_assoc($findUserAuthor);
+            $post_author_name = $row['user_firstname'] . " " . $row['user_lastname'];
 
             ?>
             <h1 class="page-header">
                 Blog Posts
-                <small>written by <?php echo $post_author; ?></small>
+                <small>written by <?php echo $post_author_name; ?></small>
             </h1>
             <?php
 
