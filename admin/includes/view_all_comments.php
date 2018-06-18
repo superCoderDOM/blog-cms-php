@@ -14,8 +14,19 @@
         </tr>
     </thead>
     <tbody>
-        <?php fetchAllComments(); ?>
-        <?php updateCommentStatus(); ?>
-        <?php deleteComment(); ?>
+        <?php 
+            if(isset($_GET['post_id'])) {
+
+                $post_id = mysqli_real_escape_string($connection, $_GET['post_id']);
+                fetchCommentsByPostID($post_id);
+
+            } else {
+
+                fetchAllComments();
+            }
+
+            updateCommentStatus();
+            deleteComment();
+         ?>
     </tbody>
 </table>
