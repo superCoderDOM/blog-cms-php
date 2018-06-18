@@ -422,7 +422,15 @@
     
             $addPost = mysqli_query($connection, $query);
             confirmQuery($addPost);
-            header("Location: ./posts.php");
+            if(isset($_GET['author_id'])) {
+
+                $author_id = mysqli_real_escape_string($connection, $_GET['author_id']);
+                header("Location: ./posts.php?author_id={$author_id}");
+    
+            } else {
+    
+                header("Location: ./posts.php");
+            }
         }
     }
 
