@@ -49,7 +49,7 @@
                                     $cat_selected = '';
                                 }
 
-                                echo "<option value='{$cat_id}' {$cat_selected}>{$cat_title}<?option>";
+                                echo "<option value='{$cat_id}' {$cat_selected}>{$cat_title}</option>";
                             }
                         ?>
                     </select>
@@ -74,7 +74,7 @@
                                     $author_selected = '';
                                 }
 
-                                echo "<option value='{$user_id}' {$author_selected}>{$user_firstname} {$user_lastname}<?option>";
+                                echo "<option value='{$user_id}' {$author_selected}>{$user_firstname} {$user_lastname}</option>";
                             }
                         ?>
                     </select>
