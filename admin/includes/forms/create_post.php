@@ -18,7 +18,7 @@
                     $cat_id = $row['cat_id'];
                     $cat_title = $row['cat_title'];
 
-                    echo "<option value='{$cat_id}'>{$cat_title}<?option>";
+                    echo "<option value='{$cat_id}'>{$cat_title}</option>";
                 }
             ?>
         </select>
@@ -37,7 +37,13 @@
                     $user_firstname = $row['user_firstname'];
                     $user_lastname = $row['user_lastname'];
 
-                    echo "<option value='{$user_id}'>{$user_firstname} {$user_lastname}<?option>";
+                    if($user_id == $_SESSION['user_id']) {
+                        $user_selected = 'selected';
+                    } else {
+                        $user_selected = '';
+                    }
+
+                    echo "<option value='{$user_id}' {$user_selected}>{$user_firstname} {$user_lastname}</option>";
                 }
             ?>
         </select>
