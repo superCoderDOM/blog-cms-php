@@ -19,6 +19,9 @@
             <a href="./comments.php"><i class="fa fa-fw fa-comments"></i> Comments </a>
         </li>
         <li>
+            <a href="./categories.php"><i class="fa fa-fw fa-list"></i> Categories </a>
+        </li>
+        <li>
             <a href="javascript:;" data-toggle="collapse" data-target="#users"><i class="fa fa-fw fa-users"></i> Users <i class="fa fa-fw fa-caret-down"></i></a>
             <ul id="users" class="collapse">
                 <li>
@@ -28,9 +31,6 @@
                     <a href="./users.php?source=add_user">Add User</a>
                 </li>
             </ul>
-        </li>
-        <li>
-            <a href="./categories.php"><i class="fa fa-fw fa-list"></i> Categories </a>
         </li>
         <li>
             <a href="./profile.php"><i class="fa fa-fw fa-user"></i> Profile </a>

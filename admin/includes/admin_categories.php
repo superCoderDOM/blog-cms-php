@@ -16,7 +16,7 @@
                 // Update Category Form Handler
                 if(isset($_GET['update_cat_id'])) {
 
-                    $cat_id = $_GET['update_cat_id'];
+                    $cat_id = escape($_GET['update_cat_id']);
                     include './includes/forms/update_category.php';
 
                 }

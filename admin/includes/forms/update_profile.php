@@ -3,9 +3,9 @@
     // Update Profile Form Handler
     if(isset($_SESSION['user_id'])) {
 
-        $user_id = $_SESSION['user_id'];
+        $user_id = escape($_SESSION['user_id']);
 
-        $query = "SELECT * FROM users WHERE user_id = '{$user_id}'";
+        $query = "SELECT * FROM users WHERE user_id = {$user_id}";
         $selectUserByUsername = mysqli_query($connection, $query);
         
         while($row = mysqli_fetch_assoc($selectUserByUsername)) {

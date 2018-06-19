@@ -3,7 +3,7 @@
     // Update User Form Handler
     if(isset($_GET['edit_user_id'])) {
 
-        $user_id = $_GET['edit_user_id'];
+        $user_id = escape($_GET['edit_user_id']);
 
         updateUser($user_id);
 

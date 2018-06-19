@@ -1,4 +1,5 @@
 <?php 
+    $cat_id = escape($cat_id);
 
     updateCategory($cat_id);
 

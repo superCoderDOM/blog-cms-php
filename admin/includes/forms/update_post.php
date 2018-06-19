@@ -3,7 +3,7 @@
     // Update Post Form Handler
     if(isset($_GET['edit_post_id'])) {
 
-        $post_id = $_GET['edit_post_id'];
+        $post_id = escape($_GET['edit_post_id']);
 
         updatePost($post_id);
 

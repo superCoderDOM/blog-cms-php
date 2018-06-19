@@ -2,9 +2,9 @@
 
     if(isset($_POST['checkBoxArray'])) {
 
-        foreach($_POST['checkBoxArray'] as $post_id) {
+        foreach(escape($_POST['checkBoxArray']) as $post_id) {
 
-            $bulk_option = $_POST['bulk_option'];
+            $bulk_option = escape($_POST['bulk_option']);
 
             switch($bulk_option) {
                 case 'Published':
@@ -69,7 +69,7 @@
             <?php 
                 if(isset($_GET['author_id'])) {
 
-                    $author_id = mysqli_real_escape_string($connection, $_GET['author_id']);
+                    $author_id = escape($_GET['author_id']);
                     fetchPostsByAuthorID($author_id);
 
                 } else {

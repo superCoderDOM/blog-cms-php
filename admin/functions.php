@@ -16,6 +16,14 @@
         }
     }
 
+    // URL and SQL Injection Protection
+    function escape($string) {
+
+        global $connection;
+
+        return mysqli_real_escape_string($connection, trim($string));
+    }
+
     // Fetch Current Number of Online Users
     function onlineUserCount() {
 
@@ -34,7 +42,7 @@
                 include "../includes/db.php";
             }
     
-            $session = session_id();
+            $session = escape(session_id());
             $time = time();
             $time_out_in_seconds = 5;
             $time_out = $time - $time_out_in_seconds;
@@ -83,22 +91,25 @@
 
         if(isset($_POST['create_category'])) {
 
-            $cat_title = $_POST['cat_title'];
+            if(isset($_SESSION['user_role']) && ($_SESSION['user_role'] == 'Admin' || $_SESSION['user_role'] == 'Contributor')) {
 
-            // Form input validation
-            if($cat_title == '' || empty($cat_title)) {
+                $cat_title = escape($_POST['cat_title']);
 
-                echo "The category field should not be empty";
+                // Form input validation
+                if($cat_title == '' || empty($cat_title)) {
 
-            } else {
+                    echo "The category field should not be empty";
 
-                // Clean potential malicious SQL injections
-                $cat_title = mysqli_real_escape_string($connection, $cat_title);
+                } else {
 
-                $query = "INSERT INTO categories(cat_title) VALUE('$cat_title') ";
+                    // Clean potential malicious SQL injections
+                    $cat_title = mysqli_real_escape_string($connection, $cat_title);
 
-                $createCategory = mysqli_query($connection, $query);
-                confirmQuery($createCategory);
+                    $query = "INSERT INTO categories(cat_title) VALUE('$cat_title') ";
+
+                    $createCategory = mysqli_query($connection, $query);
+                    confirmQuery($createCategory);
+                }
             }
         }
     }
@@ -108,21 +119,24 @@
 
         global $connection;
 
-        $query = "SELECT * FROM categories";
-        $allCategories = mysqli_query($connection, $query);
-        confirmQuery($allCategories);
+        if(isset($_SESSION['user_role']) && ($_SESSION['user_role'] == 'Admin' || $_SESSION['user_role'] == 'Contributor')) {
 
-        while($row = mysqli_fetch_assoc($allCategories)) {
+            $query = "SELECT * FROM categories";
+            $allCategories = mysqli_query($connection, $query);
+            confirmQuery($allCategories);
 
-            $cat_id = $row['cat_id'];
-            $cat_title = $row['cat_title'];
+            while($row = mysqli_fetch_assoc($allCategories)) {
 
-            echo "<tr>";
-                echo "<td> {$cat_id} </td>";
-                echo "<td> {$cat_title} </td>";
-                echo "<td><a href='./categories.php?delete_cat_id={$cat_id}'>Delete</a></td>";
-                echo "<td><a href='./categories.php?update_cat_id={$cat_id}'>Edit</a></td>";
-            echo "</tr>";
+                $cat_id = $row['cat_id'];
+                $cat_title = $row['cat_title'];
+
+                echo "<tr>";
+                    echo "<td> {$cat_id} </td>";
+                    echo "<td> {$cat_title} </td>";
+                    echo "<td><a href='./categories.php?delete_cat_id={$cat_id}'>Delete</a></td>";
+                    echo "<td><a href='./categories.php?update_cat_id={$cat_id}'>Edit</a></td>";
+                echo "</tr>";
+            }
         }
     }
 
@@ -133,17 +147,18 @@
 
         if(isset($_POST['update_category'])) {
 
-            $cat_title = $_POST['cat_title'];
+            if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
 
-            // Clean potential malicious SQL injections
-            $cat_title = mysqli_real_escape_string($connection, $cat_title);
+                $cat_id = escape($cat_id);
+                $cat_title = escape($_POST['cat_title']);
 
-            $query = "UPDATE categories SET cat_title = '{$cat_title}' ";
-            $query .= "WHERE cat_id = '{$cat_id}' ";
-    
-            $updateCategoryByID = mysqli_query($connection, $query);
-            confirmQuery($updateCategoryByID);
-            header("Location: ./categories.php");
+                $query = "UPDATE categories SET cat_title = '{$cat_title}' ";
+                $query .= "WHERE cat_id = '{$cat_id}' ";
+        
+                $updateCategoryByID = mysqli_query($connection, $query);
+                confirmQuery($updateCategoryByID);
+                header("Location: ./categories.php");
+            }
         }
     }
 
@@ -154,11 +169,15 @@
 
         if(isset($_GET['delete_cat_id'])) {
 
-            $cat_id = $_GET['delete_cat_id'];
-            $query = "DELETE FROM categories WHERE cat_id = {$cat_id}";
-            $deleteCategoryByID = mysqli_query($connection, $query);
-            confirmQuery($deleteCategoryByID);
-            header("Location: ./categories.php");
+            if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
+
+                $cat_id = escape($_GET['delete_cat_id']);
+
+                $query = "DELETE FROM categories WHERE cat_id = {$cat_id}";
+                $deleteCategoryByID = mysqli_query($connection, $query);
+                confirmQuery($deleteCategoryByID);
+                header("Location: ./categories.php");
+            }
         }
     }
 
@@ -174,32 +193,26 @@
 
         if(isset($_POST['submit_comment'])) {
 
-            $comment_post_id = $_GET['comment_post_id'];
-            $comment_author = $_POST['comment_author'];
-            $comment_email = $_POST['comment_email'];
-            $comment_content = $_POST['comment_content'];
-            // $comment_status = 'Submitted';
-            // $comment_date = date('d-m-y');
+            if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
 
-            if(!empty($comment_author) && !empty($comment_email) && !empty($comment_content)) {
+                $comment_post_id = escape($_GET['comment_post_id']);
+                $comment_author = escape($_POST['comment_author']);
+                $comment_email = escape($_POST['comment_email']);
+                $comment_content = escape($_POST['comment_content']);
 
-                // Clean potential malicious SQL injections
-                $username = mysqli_real_escape_string($connection, $username);
-                $comment_post_id = mysqli_real_escape_string($connection, $comment_post_id);
-                $comment_author = mysqli_real_escape_string($connection, $comment_author);
-                $comment_email = mysqli_real_escape_string($connection, $comment_email);
-                $comment_content = mysqli_real_escape_string($connection, $comment_content);
+                if(!empty($comment_author) && !empty($comment_email) && !empty($comment_content)) {
 
-                $query = "INSERT INTO comments(comment_post_id, comment_author, comment_email, comment_content) ";
-                $query .= "VALUES('{$comment_post_id}', '{$comment_author}', '{$comment_email}', '{$comment_content}')";
+                    $query = "INSERT INTO comments(comment_post_id, comment_author, comment_email, comment_content) ";
+                    $query .= "VALUES('{$comment_post_id}', '{$comment_author}', '{$comment_email}', '{$comment_content}')";
 
-                $addComment = mysqli_query($connection, $query);
-                confirmQuery($addcomment);
-                header("Location: ./posts.php?post_id={$comment_post_id}");
+                    $addComment = mysqli_query($connection, $query);
+                    confirmQuery($addcomment);
+                    header("Location: ./posts.php?post_id={$comment_post_id}");
 
-            } else {
+                } else {
 
-                echo "<script>alert('Fields cannot be empty')</script>";
+                    echo "<script>alert('Fields cannot be empty')</script>";
+                }
             }
         }
     }
@@ -209,40 +222,43 @@
 
         global $connection;
 
-        $query = "SELECT * FROM comments ORDER BY comment_id DESC";
-        $selectAllComments = mysqli_query($connection, $query);
+        if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
 
-        while($row = mysqli_fetch_assoc($selectAllComments)) {
+            $query = "SELECT * FROM comments ORDER BY comment_id DESC";
+            $selectAllComments = mysqli_query($connection, $query);
 
-            $comment_id = $row['comment_id'];
-            $comment_post_id = $row['comment_post_id'];
-            $comment_author = $row['comment_author'];
-            $comment_email = $row['comment_email'];
-            $comment_content = $row['comment_content'];
-            $comment_status = $row['comment_status'];
-            $comment_date = $row['comment_date'];
+            while($row = mysqli_fetch_assoc($selectAllComments)) {
 
-            // Fecth post title
-            $query = "SELECT * FROM posts WHERE post_id = {$comment_post_id}";
-            $selectPostByID = mysqli_query($connection, $query);
-        
-            while($row = mysqli_fetch_assoc($selectPostByID)) {
-        
-                $comment_post_title = $row['post_title'];
+                $comment_id = $row['comment_id'];
+                $comment_post_id = $row['comment_post_id'];
+                $comment_author = $row['comment_author'];
+                $comment_email = $row['comment_email'];
+                $comment_content = $row['comment_content'];
+                $comment_status = $row['comment_status'];
+                $comment_date = $row['comment_date'];
 
-                // Display results as table row
-                echo "<tr>";
-                    echo "<td> {$comment_id} </td>";
-                    echo "<td><a href='../post.php?post_id={$comment_post_id}'> {$comment_post_title} </a></td>";
-                    echo "<td> {$comment_author} </td>";
-                    echo "<td> {$comment_email} </td>";
-                    echo "<td> {$comment_content} </td>";
-                    echo "<td> {$comment_status} </td>";
-                    echo "<td> {$comment_date} </td>";
-                    echo "<td><a href='./comments.php?approve_comment_id={$comment_id}'>Approve</a></td>";
-                    echo "<td><a href='./comments.php?reject_comment_id={$comment_id}'>Reject</a></td>";
-                    echo "<td><a href='./comments.php?delete_comment_id={$comment_id}'>Delete</a></td>";
-                echo "</tr>";
+                // Fecth post title
+                $query = "SELECT * FROM posts WHERE post_id = {$comment_post_id}";
+                $selectPostByID = mysqli_query($connection, $query);
+            
+                while($row = mysqli_fetch_assoc($selectPostByID)) {
+            
+                    $comment_post_title = $row['post_title'];
+
+                    // Display results as table row
+                    echo "<tr>";
+                        echo "<td> {$comment_id} </td>";
+                        echo "<td><a href='../post.php?post_id={$comment_post_id}'> {$comment_post_title} </a></td>";
+                        echo "<td> {$comment_author} </td>";
+                        echo "<td> {$comment_email} </td>";
+                        echo "<td> {$comment_content} </td>";
+                        echo "<td> {$comment_status} </td>";
+                        echo "<td> {$comment_date} </td>";
+                        echo "<td><a href='./comments.php?approve_comment_id={$comment_id}'>Approve</a></td>";
+                        echo "<td><a href='./comments.php?reject_comment_id={$comment_id}'>Reject</a></td>";
+                        echo "<td><a href='./comments.php?delete_comment_id={$comment_id}'>Delete</a></td>";
+                    echo "</tr>";
+                }
             }
         }
     }
@@ -251,42 +267,47 @@
 
         global $connection;
 
-        $query = "SELECT * FROM comments WHERE comment_post_id = '{$post_id}' ORDER BY comment_id DESC";
-        $selectCommentsByPostID = mysqli_query($connection, $query);
-        confirmQuery($selectCommentsByPostID);
+        if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
 
-        while($row = mysqli_fetch_assoc($selectCommentsByPostID)) {
+            $post_id = escape($post_id);
 
-            $comment_id = $row['comment_id'];
-            $comment_post_id = $row['comment_post_id'];
-            $comment_author = $row['comment_author'];
-            $comment_email = $row['comment_email'];
-            $comment_content = $row['comment_content'];
-            $comment_status = $row['comment_status'];
-            $comment_date = $row['comment_date'];
+            $query = "SELECT * FROM comments WHERE comment_post_id = '{$post_id}' ORDER BY comment_id DESC";
+            $selectCommentsByPostID = mysqli_query($connection, $query);
+            confirmQuery($selectCommentsByPostID);
 
-            // Fecth post title
-            $query = "SELECT * FROM posts WHERE post_id = {$comment_post_id}";
-            $selectPostByID = mysqli_query($connection, $query);
-            confirmQuery($selectPostByID);
-        
-            while($row = mysqli_fetch_assoc($selectPostByID)) {
-        
-                $comment_post_title = $row['post_title'];
+            while($row = mysqli_fetch_assoc($selectCommentsByPostID)) {
 
-                // Display results as table row
-                echo "<tr>";
-                    echo "<td> {$comment_id} </td>";
-                    echo "<td><a href='../post.php?post_id={$comment_post_id}'> {$comment_post_title} </a></td>";
-                    echo "<td> {$comment_author} </td>";
-                    echo "<td> {$comment_email} </td>";
-                    echo "<td> {$comment_content} </td>";
-                    echo "<td> {$comment_status} </td>";
-                    echo "<td> {$comment_date} </td>";
-                    echo "<td><a href='./comments.php?post_id={$post_id}&approve_comment_id={$comment_id}'>Approve</a></td>";
-                    echo "<td><a href='./comments.php?post_id={$post_id}&reject_comment_id={$comment_id}'>Reject</a></td>";
-                    echo "<td><a href='./comments.php?post_id={$post_id}&delete_comment_id={$comment_id}'>Delete</a></td>";
-                echo "</tr>";
+                $comment_id = $row['comment_id'];
+                $comment_post_id = $row['comment_post_id'];
+                $comment_author = $row['comment_author'];
+                $comment_email = $row['comment_email'];
+                $comment_content = $row['comment_content'];
+                $comment_status = $row['comment_status'];
+                $comment_date = $row['comment_date'];
+
+                // Fecth post title
+                $query = "SELECT * FROM posts WHERE post_id = {$comment_post_id}";
+                $selectPostByID = mysqli_query($connection, $query);
+                confirmQuery($selectPostByID);
+            
+                while($row = mysqli_fetch_assoc($selectPostByID)) {
+            
+                    $comment_post_title = $row['post_title'];
+
+                    // Display results as table row
+                    echo "<tr>";
+                        echo "<td> {$comment_id} </td>";
+                        echo "<td><a href='../post.php?post_id={$comment_post_id}'> {$comment_post_title} </a></td>";
+                        echo "<td> {$comment_author} </td>";
+                        echo "<td> {$comment_email} </td>";
+                        echo "<td> {$comment_content} </td>";
+                        echo "<td> {$comment_status} </td>";
+                        echo "<td> {$comment_date} </td>";
+                        echo "<td><a href='./comments.php?post_id={$post_id}&approve_comment_id={$comment_id}'>Approve</a></td>";
+                        echo "<td><a href='./comments.php?post_id={$post_id}&reject_comment_id={$comment_id}'>Reject</a></td>";
+                        echo "<td><a href='./comments.php?post_id={$post_id}&delete_comment_id={$comment_id}'>Delete</a></td>";
+                    echo "</tr>";
+                }
             }
         }
     }
@@ -298,31 +319,34 @@
 
         if(isset($_GET['approve_comment_id']) || isset($_GET['reject_comment_id'])) {
 
-            if(isset($_GET['approve_comment_id'])) {
+            if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
 
-                $comment_id = $_GET['approve_comment_id'];
-                $comment_status = 'Approved';
+                if(isset($_GET['approve_comment_id'])) {
 
-            } elseif(isset($_GET['reject_comment_id'])) {
+                    $comment_id = escape($_GET['approve_comment_id']);
+                    $comment_status = 'Approved';
 
-                $comment_id = $_GET['reject_comment_id'];
-                $comment_status = 'Rejected';
-            }
+                } elseif(isset($_GET['reject_comment_id'])) {
 
-            $query = "UPDATE comments SET comment_status = '{$comment_status}' ";
-            $query .= "WHERE comment_id = '{$comment_id}' ";
+                    $comment_id = escape($_GET['reject_comment_id']);
+                    $comment_status = 'Rejected';
+                }
 
-            $updateCommentStatusByID = mysqli_query($connection, $query);
-            confirmQuery($updateCommentStatusByID);
+                $query = "UPDATE comments SET comment_status = '{$comment_status}' ";
+                $query .= "WHERE comment_id = '{$comment_id}' ";
 
-            if(isset($_GET['post_id'])) {
+                $updateCommentStatusByID = mysqli_query($connection, $query);
+                confirmQuery($updateCommentStatusByID);
 
-                $post_id = mysqli_real_escape_string($connection, $_GET['post_id']);
-                header("Location: ./comments.php?post_id={$post_id}");
+                if(isset($_GET['post_id'])) {
 
-            } else {
+                    $post_id = escape($_GET['post_id']);
+                    header("Location: ./comments.php?post_id={$post_id}");
 
-                header("Location: ./comments.php");
+                } else {
+
+                    header("Location: ./comments.php");
+                }
             }
         }
     }
@@ -334,19 +358,22 @@
 
         if(isset($_GET['delete_comment_id'])) {
 
-            $comment_id = $_GET['delete_comment_id'];
-            $query = "DELETE FROM comments WHERE comment_id = {$comment_id}";
-            $deleteCommentByID = mysqli_query($connection, $query);
-            confirmQuery($deleteCommentByID);
+            if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
 
-            if(isset($_GET['post_id'])) {
+                $comment_id = escape($_GET['delete_comment_id']);
+                $query = "DELETE FROM comments WHERE comment_id = {$comment_id}";
+                $deleteCommentByID = mysqli_query($connection, $query);
+                confirmQuery($deleteCommentByID);
 
-                $post_id = mysqli_real_escape_string($connection, $_GET['post_id']);
-                header("Location: ./comments.php?post_id={$post_id}");
+                if(isset($_GET['post_id'])) {
 
-            } else {
+                    $post_id = escape($_GET['post_id']);
+                    header("Location: ./comments.php?post_id={$post_id}");
 
-                header("Location: ./comments.php");
+                } else {
+
+                    header("Location: ./comments.php");
+                }
             }
         }
     }
@@ -361,34 +388,31 @@
         global $connection;
 
         if(isset($_POST['create_post'])) {
+
+            if(isset($_SESSION['user_role']) && ($_SESSION['user_role'] == 'Admin' || $_SESSION['user_role'] == 'Contributor')) {
             
-            $post_title = $_POST['post_title'];
-            $post_category_id = $_POST['post_category_id'];
-            $post_author_id = $_POST['post_author_id'];
-            $post_status = $_POST['post_status'];
+                $post_title = escape($_POST['post_title']);
+                $post_category_id = escape($_POST['post_category_id']);
+                $post_author_id = escape($_POST['post_author_id']);
+                $post_status = escape($_POST['post_status']);
 
-            $post_image = $_FILES['post_image']['name'];
-            $post_image_temp = $_FILES['post_image']['tmp_name'];
+                $post_image = escape($_FILES['post_image']['name']);
+                $post_image_temp = escape($_FILES['post_image']['tmp_name']);
 
-            $post_tags = $_POST['post_tags'];
-            $post_content = $_POST['post_content'];
+                $post_tags = escape($_POST['post_tags']);
+                $post_content = escape($_POST['post_content']);
 
-            // Clean potential malicious SQL injections
-            $post_title = mysqli_real_escape_string($connection, $post_title);
-            $post_author_id = mysqli_real_escape_string($connection, $post_author_id);
-            $post_tags = mysqli_real_escape_string($connection, $post_tags);
-            $post_content = mysqli_real_escape_string($connection, $post_content);
+                move_uploaded_file($post_image_temp, "../images/$post_image");
 
-            move_uploaded_file($post_image_temp, "../images/$post_image");
+                $query = "INSERT INTO posts(post_category_id, post_title, post_author_id, post_image, post_content, post_tags, post_status) ";
+                $query .= "VALUES('{$post_category_id}', '{$post_title}', '{$post_author_id}', '{$post_image}', '{$post_content}', '{$post_tags}', '{$post_status}')";
 
-            $query = "INSERT INTO posts(post_category_id, post_title, post_author_id, post_image, post_content, post_tags, post_status) ";
-            $query .= "VALUES('{$post_category_id}', '{$post_title}', '{$post_author_id}', '{$post_image}', '{$post_content}', '{$post_tags}', '{$post_status}')";
+                $addPost = mysqli_query($connection, $query);
+                confirmQuery($addPost);
 
-            $addPost = mysqli_query($connection, $query);
-            confirmQuery($addPost);
-
-            // echo "<p class='bg-success'>Post Created. <a href='../post.php?post_id={$post_id}'> View Post </a> or <a href='./posts.php'> View All Posts </a></p>";
-            header("Location: ./posts.php");
+                // echo "<p class='bg-success'>Post Created. <a href='../post.php?post_id={$post_id}'> View Post </a> or <a href='./posts.php'> View All Posts </a></p>";
+                header("Location: ./posts.php");
+            }
         }
     }
 
@@ -396,40 +420,45 @@
 
         global $connection;
 
-        $query = "SELECT * FROM posts WHERE post_id = '{$post_id}'";
-        $selectPostByID = mysqli_query($connection, $query);
-        if(confirmQuery($selectPostByID)) {
+        if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
 
-            while($row = mysqli_fetch_assoc($selectPostByID)) {
-    
-                $post_category_id = $row['post_category_id'];
-                $post_title = $row['post_title'];
-                $post_author_id = $row['post_author_id'];
-                $post_date = $row['post_date'];
-                $post_image = $row['post_image'];
-                $post_content = $row['post_content'];
-                $post_tags = $row['post_tags'];
-                $post_status = $row['post_status'];
+            $post_id = escape($post_id);
 
-                $post_title = mysqli_real_escape_string($connection, $post_title);
-                $post_author_id = mysqli_real_escape_string($connection, $post_author_id);
-                $post_tags = mysqli_real_escape_string($connection, $post_tags);
-                $post_content = mysqli_real_escape_string($connection, $post_content);
-            }
-    
-            $query = "INSERT INTO posts(post_category_id, post_title, post_author_id, post_image, post_content, post_tags, post_status) ";
-            $query .= "VALUES('{$post_category_id}', '{$post_title}', '{$post_author_id}', '{$post_image}', '{$post_content}', '{$post_tags}', '{$post_status}')";
-    
-            $addPost = mysqli_query($connection, $query);
-            confirmQuery($addPost);
-            if(isset($_GET['author_id'])) {
+            $query = "SELECT * FROM posts WHERE post_id = '{$post_id}'";
+            $selectPostByID = mysqli_query($connection, $query);
+            if(confirmQuery($selectPostByID)) {
 
-                $author_id = mysqli_real_escape_string($connection, $_GET['author_id']);
-                header("Location: ./posts.php?author_id={$author_id}");
-    
-            } else {
-    
-                header("Location: ./posts.php");
+                while($row = mysqli_fetch_assoc($selectPostByID)) {
+        
+                    $post_category_id = $row['post_category_id'];
+                    $post_title = $row['post_title'];
+                    $post_author_id = $row['post_author_id'];
+                    $post_date = $row['post_date'];
+                    $post_image = $row['post_image'];
+                    $post_content = $row['post_content'];
+                    $post_tags = $row['post_tags'];
+                    $post_status = $row['post_status'];
+
+                    $post_title = mysqli_real_escape_string($connection, $post_title);
+                    $post_author_id = mysqli_real_escape_string($connection, $post_author_id);
+                    $post_tags = mysqli_real_escape_string($connection, $post_tags);
+                    $post_content = mysqli_real_escape_string($connection, $post_content);
+                }
+        
+                $query = "INSERT INTO posts(post_category_id, post_title, post_author_id, post_image, post_content, post_tags, post_status) ";
+                $query .= "VALUES('{$post_category_id}', '{$post_title}', '{$post_author_id}', '{$post_image}', '{$post_content}', '{$post_tags}', '{$post_status}')";
+        
+                $addPost = mysqli_query($connection, $query);
+                confirmQuery($addPost);
+                if(isset($_GET['author_id'])) {
+
+                    $author_id = escape($_GET['author_id']);
+                    header("Location: ./posts.php?author_id={$author_id}");
+        
+                } else {
+        
+                    header("Location: ./posts.php");
+                }
             }
         }
     }
@@ -439,61 +468,64 @@
 
         global $connection;
 
-        $query = "SELECT * FROM posts ORDER BY post_id DESC";
-        $allPosts = mysqli_query($connection, $query);
-        confirmQuery($allPosts);
+        if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
 
-        while($row = mysqli_fetch_assoc($allPosts)) {
+            $query = "SELECT * FROM posts ORDER BY post_id DESC";
+            $allPosts = mysqli_query($connection, $query);
+            confirmQuery($allPosts);
 
-            $post_id = $row['post_id'];
-            $post_category_id = $row['post_category_id'];
-            $post_title = $row['post_title'];
-            $post_author_id = $row['post_author_id'];
-            $post_date = $row['post_date'];
-            $post_image = $row['post_image'];
-            $post_content = $row['post_content'];
-            $post_tags = $row['post_tags'];
-            $post_view_count = $row['post_view_count'];
-            $post_status = $row['post_status'];
+            while($row = mysqli_fetch_assoc($allPosts)) {
 
-            // Fetch author name
-            $query = "SELECT * FROM users WHERE user_id = $post_author_id";
-            $findUserAuthor = mysqli_query($connection, $query);
-            confirmQuery($findUserAuthor);
-            $row = mysqli_fetch_assoc($findUserAuthor);
-            $post_author_name = $row['user_firstname'] . " " . $row['user_lastname'];
+                $post_id = $row['post_id'];
+                $post_category_id = $row['post_category_id'];
+                $post_title = $row['post_title'];
+                $post_author_id = $row['post_author_id'];
+                $post_date = $row['post_date'];
+                $post_image = $row['post_image'];
+                $post_content = $row['post_content'];
+                $post_tags = $row['post_tags'];
+                $post_view_count = $row['post_view_count'];
+                $post_status = $row['post_status'];
 
-            // Fecth category title
-            $query = "SELECT * FROM categories WHERE cat_id = {$post_category_id}";
-            $selectCategoryByID = mysqli_query($connection, $query);
-            confirmQuery($selectCategoryByID);
-            $row = mysqli_fetch_assoc($selectCategoryByID);
-            $post_category_title = $row['cat_title'];
+                // Fetch author name
+                $query = "SELECT * FROM users WHERE user_id = $post_author_id";
+                $findUserAuthor = mysqli_query($connection, $query);
+                confirmQuery($findUserAuthor);
+                $row = mysqli_fetch_assoc($findUserAuthor);
+                $post_author_name = $row['user_firstname'] . " " . $row['user_lastname'];
 
-            // Fetch comment count
-            $query = "SELECT * FROM comments WHERE comment_post_id = '{$post_id}'";
-            $findCommentsByPostID = mysqli_query($connection, $query);
-            confirmQuery($findCommentsByPostID);
-            $commentCount = mysqli_num_rows($findCommentsByPostID);
+                // Fecth category title
+                $query = "SELECT * FROM categories WHERE cat_id = {$post_category_id}";
+                $selectCategoryByID = mysqli_query($connection, $query);
+                confirmQuery($selectCategoryByID);
+                $row = mysqli_fetch_assoc($selectCategoryByID);
+                $post_category_title = $row['cat_title'];
 
-            // Display results as table row
-            echo "<tr>";
-                echo "<td><input type='checkbox' class='checkBoxes' name='checkBoxArray[]' value='{$post_id}'></td>";
-                echo "<td> {$post_id} </td>";
-                echo "<td><a href='./posts.php?author_id={$post_author_id}'> {$post_author_name} </a></td>";
-                echo "<td><a href='../post.php?post_id={$post_id}'> {$post_title} </a></td>";
-                echo "<td> {$post_category_title} </td>";
-                echo "<td> {$post_status} </td>";
-                echo "<td><img src='../images/{$post_image}' alt='{$post_title}' width='50px'></td>";
-                echo "<td> {$post_tags} </td>";
-                echo "<td> {$post_view_count} </td>";
-                echo "<td><a href='./comments.php?post_id={$post_id}'> {$commentCount} </a></td>";
-                echo "<td> {$post_date} </td>";
-                echo "<td><a href='../post.php?post_id={$post_id}'> View </a></td>";
-                echo "<td><a href='./posts.php?source=edit_post&edit_post_id={$post_id}'> Edit </a></td>";
-                echo "<td><a href='./posts.php?delete_post_id={$post_id}' onClick=\"javascript: return confirm('Are you sure you want to DELETE this post?');\"> Delete </a></td>";
-                echo "<td><a href='./posts.php?reset_post_id={$post_id}'> Reset </a></td>";
-            echo "</tr>";
+                // Fetch comment count
+                $query = "SELECT * FROM comments WHERE comment_post_id = '{$post_id}'";
+                $findCommentsByPostID = mysqli_query($connection, $query);
+                confirmQuery($findCommentsByPostID);
+                $commentCount = mysqli_num_rows($findCommentsByPostID);
+
+                // Display results as table row
+                echo "<tr>";
+                    echo "<td><input type='checkbox' class='checkBoxes' name='checkBoxArray[]' value='{$post_id}'></td>";
+                    echo "<td> {$post_id} </td>";
+                    echo "<td><a href='./posts.php?author_id={$post_author_id}'> {$post_author_name} </a></td>";
+                    echo "<td><a href='../post.php?post_id={$post_id}'> {$post_title} </a></td>";
+                    echo "<td> {$post_category_title} </td>";
+                    echo "<td> {$post_status} </td>";
+                    echo "<td><img src='../images/{$post_image}' alt='{$post_title}' width='50px'></td>";
+                    echo "<td> {$post_tags} </td>";
+                    echo "<td> {$post_view_count} </td>";
+                    echo "<td><a href='./comments.php?post_id={$post_id}'> {$commentCount} </a></td>";
+                    echo "<td> {$post_date} </td>";
+                    echo "<td><a href='../post.php?post_id={$post_id}'> View </a></td>";
+                    echo "<td><a href='./posts.php?source=edit_post&edit_post_id={$post_id}'> Edit </a></td>";
+                    echo "<td><a href='./posts.php?delete_post_id={$post_id}' onClick=\"javascript: return confirm('Are you sure you want to DELETE this post?');\"> Delete </a></td>";
+                    echo "<td><a href='./posts.php?reset_post_id={$post_id}'> Reset </a></td>";
+                echo "</tr>";
+            }
         }
     }
 
@@ -501,61 +533,66 @@
 
         global $connection;
 
-        $query = "SELECT * FROM posts WHERE post_author_id = $post_author_id ORDER BY post_id DESC";
-        $fetchPostsByAuthorID = mysqli_query($connection, $query);
-        confirmQuery($fetchPostsByAuthorID);
+        if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
 
-        while($row = mysqli_fetch_assoc($fetchPostsByAuthorID)) {
+            $post_author_id = escape($post_author_id);
 
-            $post_id = $row['post_id'];
-            $post_category_id = $row['post_category_id'];
-            $post_title = $row['post_title'];
-            $post_author_id = $row['post_author_id'];
-            $post_date = $row['post_date'];
-            $post_image = $row['post_image'];
-            $post_content = $row['post_content'];
-            $post_tags = $row['post_tags'];
-            $post_view_count = $row['post_view_count'];
-            $post_status = $row['post_status'];
+            $query = "SELECT * FROM posts WHERE post_author_id = $post_author_id ORDER BY post_id DESC";
+            $fetchPostsByAuthorID = mysqli_query($connection, $query);
+            confirmQuery($fetchPostsByAuthorID);
 
-            // Fetch author name
-            $query = "SELECT * FROM users WHERE user_id = $post_author_id";
-            $findUserAuthor = mysqli_query($connection, $query);
-            confirmQuery($findUserAuthor);
-            $row = mysqli_fetch_assoc($findUserAuthor);
-            $post_author_name = $row['user_firstname'] . " " . $row['user_lastname'];
+            while($row = mysqli_fetch_assoc($fetchPostsByAuthorID)) {
 
-            // Fecth category title
-            $query = "SELECT * FROM categories WHERE cat_id = {$post_category_id}";
-            $selectCategoryByID = mysqli_query($connection, $query);
-            confirmQuery($selectCategoryByID);
-            $row = mysqli_fetch_assoc($selectCategoryByID);
-            $post_category_title = $row['cat_title'];
+                $post_id = $row['post_id'];
+                $post_category_id = $row['post_category_id'];
+                $post_title = $row['post_title'];
+                $post_author_id = $row['post_author_id'];
+                $post_date = $row['post_date'];
+                $post_image = $row['post_image'];
+                $post_content = $row['post_content'];
+                $post_tags = $row['post_tags'];
+                $post_view_count = $row['post_view_count'];
+                $post_status = $row['post_status'];
 
-            // Fetch comment count
-            $query = "SELECT * FROM comments WHERE comment_post_id = '{$post_id}'";
-            $findCommentsByPostID = mysqli_query($connection, $query);
-            confirmQuery($findCommentsByPostID);
-            $commentCount = mysqli_num_rows($findCommentsByPostID);
+                // Fetch author name
+                $query = "SELECT * FROM users WHERE user_id = $post_author_id";
+                $findUserAuthor = mysqli_query($connection, $query);
+                confirmQuery($findUserAuthor);
+                $row = mysqli_fetch_assoc($findUserAuthor);
+                $post_author_name = $row['user_firstname'] . " " . $row['user_lastname'];
 
-            // Display results as table row
-            echo "<tr>";
-                echo "<td><input type='checkbox' class='checkBoxes' name='checkBoxArray[]' value='{$post_id}'></td>";
-                echo "<td> {$post_id} </td>";
-                echo "<td><a href='./posts.php?author_id={$post_author_id}'> {$post_author_name} </a></td>";
-                echo "<td><a href='../post.php?post_id={$post_id}'> {$post_title} </a></td>";
-                echo "<td> {$post_category_title} </td>";
-                echo "<td> {$post_status} </td>";
-                echo "<td><img src='../images/{$post_image}' alt='{$post_title}' width='50px'></td>";
-                echo "<td> {$post_tags} </td>";
-                echo "<td> {$post_view_count} </td>";
-                echo "<td><a href='./comments.php?post_id={$post_id}'> {$commentCount} </a></td>";
-                echo "<td> {$post_date} </td>";
-                echo "<td><a href='../post.php?post_id={$post_id}'> View </a></td>";
-                echo "<td><a href='./posts.php?source=edit_post&edit_post_id={$post_id}'> Edit </a></td>";
-                echo "<td><a href='./posts.php?delete_post_id={$post_id}&author_id={$post_author_id}' onClick=\"javascript: return confirm('Are you sure you want to DELETE this post?');\"> Delete </a></td>";
-                echo "<td><a href='./posts.php?reset_post_id={$post_id}&author_id={$post_author_id}'> Reset </a></td>";
-            echo "</tr>";
+                // Fecth category title
+                $query = "SELECT * FROM categories WHERE cat_id = {$post_category_id}";
+                $selectCategoryByID = mysqli_query($connection, $query);
+                confirmQuery($selectCategoryByID);
+                $row = mysqli_fetch_assoc($selectCategoryByID);
+                $post_category_title = $row['cat_title'];
+
+                // Fetch comment count
+                $query = "SELECT * FROM comments WHERE comment_post_id = '{$post_id}'";
+                $findCommentsByPostID = mysqli_query($connection, $query);
+                confirmQuery($findCommentsByPostID);
+                $commentCount = mysqli_num_rows($findCommentsByPostID);
+
+                // Display results as table row
+                echo "<tr>";
+                    echo "<td><input type='checkbox' class='checkBoxes' name='checkBoxArray[]' value='{$post_id}'></td>";
+                    echo "<td> {$post_id} </td>";
+                    echo "<td><a href='./posts.php?author_id={$post_author_id}'> {$post_author_name} </a></td>";
+                    echo "<td><a href='../post.php?post_id={$post_id}'> {$post_title} </a></td>";
+                    echo "<td> {$post_category_title} </td>";
+                    echo "<td> {$post_status} </td>";
+                    echo "<td><img src='../images/{$post_image}' alt='{$post_title}' width='50px'></td>";
+                    echo "<td> {$post_tags} </td>";
+                    echo "<td> {$post_view_count} </td>";
+                    echo "<td><a href='./comments.php?post_id={$post_id}'> {$commentCount} </a></td>";
+                    echo "<td> {$post_date} </td>";
+                    echo "<td><a href='../post.php?post_id={$post_id}'> View </a></td>";
+                    echo "<td><a href='./posts.php?source=edit_post&edit_post_id={$post_id}'> Edit </a></td>";
+                    echo "<td><a href='./posts.php?delete_post_id={$post_id}&author_id={$post_author_id}' onClick=\"javascript: return confirm('Are you sure you want to DELETE this post?');\"> Delete </a></td>";
+                    echo "<td><a href='./posts.php?reset_post_id={$post_id}&author_id={$post_author_id}'> Reset </a></td>";
+                echo "</tr>";
+            }
         }
     }
 
@@ -564,50 +601,49 @@
 
         global $connection;
 
+        $post_id = escape($post_id);
+
         if(isset($_POST['update_post'])) {
 
-            $post_title = $_POST['post_title'];
-            $post_category_id = $_POST['post_category_id'];
-            $post_author_id = $_POST['post_author_id'];
-            $post_status = $_POST['post_status'];
-            $post_image = $_FILES['post_image']['name'];
-            $post_image_temp = $_FILES['post_image']['tmp_name'];
-            $post_tags = $_POST['post_tags'];
-            $post_content = $_POST['post_content'];
+            if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
 
-            // Clean potential malicious SQL injections
-            $post_title = mysqli_real_escape_string($connection, $post_title);
-            $post_author_id = mysqli_real_escape_string($connection, $post_author_id);
-            $post_tags = mysqli_real_escape_string($connection, $post_tags);
-            $post_content = mysqli_real_escape_string($connection, $post_content);
+                $post_title = escape($_POST['post_title']);
+                $post_category_id = escape($_POST['post_category_id']);
+                $post_author_id = escape($_POST['post_author_id']);
+                $post_status = escape($_POST['post_status']);
+                $post_image = escape($_FILES['post_image']['name']);
+                $post_image_temp = escape($_FILES['post_image']['tmp_name']);
+                $post_tags = escape($_POST['post_tags']);
+                $post_content = escape($_POST['post_content']);
 
-            move_uploaded_file($post_image_temp, "../images/$post_image");
+                move_uploaded_file($post_image_temp, "../images/$post_image");
 
-            if(empty($post_image)) {
-                $query = "SELECT * FROM posts WHERE post_id = {$post_id}";
-                $selectImageByID = mysqli_query($connection, $query);
+                if(empty($post_image)) {
+                    $query = "SELECT * FROM posts WHERE post_id = {$post_id}";
+                    $selectImageByID = mysqli_query($connection, $query);
 
-                while($row = mysqli_fetch_assoc($selectImageByID)) {
+                    while($row = mysqli_fetch_assoc($selectImageByID)) {
 
-                    $post_image = $row['post_image'];
+                        $post_image = $row['post_image'];
+                    }
                 }
+
+                $query = "UPDATE posts SET ";
+                $query .= "post_title = '{$post_title}', ";
+                $query .= "post_category_id = '{$post_category_id}', ";
+                $query .= "post_author_id = '{$post_author_id}', ";
+                $query .= "post_status = '{$post_status}', ";
+                $query .= "post_image = '{$post_image}', ";
+                $query .= "post_tags = '{$post_tags}', ";
+                $query .= "post_content = '{$post_content}' ";
+                $query .= "WHERE post_id = '{$post_id}' ";
+
+                $updatePostByID = mysqli_query($connection, $query);
+                confirmQuery($updatePostByID);
+
+                echo "<p class='bg-success'>Post Updated. <a href='../post.php?post_id={$post_id}'> View Post </a> or <a href='./posts.php'> Edit More Posts </a></p>";
+                // header("Location: ./posts.php");
             }
-
-            $query = "UPDATE posts SET ";
-            $query .= "post_title = '{$post_title}', ";
-            $query .= "post_category_id = '{$post_category_id}', ";
-            $query .= "post_author_id = '{$post_author_id}', ";
-            $query .= "post_status = '{$post_status}', ";
-            $query .= "post_image = '{$post_image}', ";
-            $query .= "post_tags = '{$post_tags}', ";
-            $query .= "post_content = '{$post_content}' ";
-            $query .= "WHERE post_id = '{$post_id}' ";
-
-            $updatePostByID = mysqli_query($connection, $query);
-            confirmQuery($updatePostByID);
-
-            echo "<p class='bg-success'>Post Updated. <a href='../post.php?post_id={$post_id}'> View Post </a> or <a href='./posts.php'> Edit More Posts </a></p>";
-            // header("Location: ./posts.php");
         }
     }
 
@@ -615,17 +651,23 @@
 
         global $connection;
 
-        $query = "UPDATE posts SET post_status = '{$post_status}' WHERE post_id = '{$post_id}'";
-        $updatePostStatusByID = mysqli_query($connection, $query);
-        confirmQuery($updatePostStatusByID);
-        if(isset($_GET['author_id'])) {
+        if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
 
-            $author_id = mysqli_real_escape_string($connection, $_GET['author_id']);
-            header("Location: ./posts.php?author_id={$author_id}");
+            $post_id = escape($post_id);
+            $post_status = escape($post_status);
 
-        } else {
+            $query = "UPDATE posts SET post_status = '{$post_status}' WHERE post_id = '{$post_id}'";
+            $updatePostStatusByID = mysqli_query($connection, $query);
+            confirmQuery($updatePostStatusByID);
+            if(isset($_GET['author_id'])) {
 
-            header("Location: ./posts.php");
+                $author_id = escape($_GET['author_id']);
+                header("Location: ./posts.php?author_id={$author_id}");
+
+            } else {
+
+                header("Location: ./posts.php");
+            }
         }
     }
 
@@ -635,19 +677,22 @@
 
         if(isset($_GET['reset_post_id'])) {
 
-            $post_id = mysqli_real_escape_string($connection, $_GET['reset_post_id']);
+            if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
 
-            $query = "UPDATE posts SET post_view_count = 0 WHERE post_id = '{$post_id}'";
-            $resetPostViewsByID = mysqli_query($connection, $query);
-            confirmQuery($resetPostViewsByID);
-            if(isset($_GET['author_id'])) {
+                $post_id = escape($_GET['reset_post_id']);
 
-                $author_id = mysqli_real_escape_string($connection, $_GET['author_id']);
-                header("Location: ./posts.php?author_id={$author_id}");
-    
-            } else {
-    
-                header("Location: ./posts.php");
+                $query = "UPDATE posts SET post_view_count = 0 WHERE post_id = '{$post_id}'";
+                $resetPostViewsByID = mysqli_query($connection, $query);
+                confirmQuery($resetPostViewsByID);
+                if(isset($_GET['author_id'])) {
+
+                    $author_id = escape($_GET['author_id']);
+                    header("Location: ./posts.php?author_id={$author_id}");
+        
+                } else {
+        
+                    header("Location: ./posts.php");
+                }
             }
         }
     }
@@ -659,18 +704,22 @@
 
         if(isset($_GET['delete_post_id'])) {
 
-            $post_id = $_GET['delete_post_id'];
-            $query = "DELETE FROM posts WHERE post_id = {$post_id}";
-            $deletePostByID = mysqli_query($connection, $query);
-            confirmQuery($deletePostByID);
-            if(isset($_GET['author_id'])) {
+            if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
 
-                $author_id = mysqli_real_escape_string($connection, $_GET['author_id']);
-                header("Location: ./posts.php?author_id={$author_id}");
-    
-            } else {
-    
-                header("Location: ./posts.php");
+                $post_id = escape($_GET['delete_post_id']);
+
+                $query = "DELETE FROM posts WHERE post_id = {$post_id}";
+                $deletePostByID = mysqli_query($connection, $query);
+                confirmQuery($deletePostByID);
+                if(isset($_GET['author_id'])) {
+
+                    $author_id = escape($_GET['author_id']);
+                    header("Location: ./posts.php?author_id={$author_id}");
+        
+                } else {
+        
+                    header("Location: ./posts.php");
+                }
             }
         }
     }
@@ -679,17 +728,22 @@
 
         global $connection;
 
-        $query = "DELETE FROM posts WHERE post_id = {$post_id}";
-        $deletePostByID = mysqli_query($connection, $query);
-        confirmQuery($deletePostByID);
-        if(isset($_GET['author_id'])) {
+        if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
 
-            $author_id = mysqli_real_escape_string($connection, $_GET['author_id']);
-            header("Location: ./posts.php?author_id={$author_id}");
+            $post_id = escape($post_id);
 
-        } else {
+            $query = "DELETE FROM posts WHERE post_id = {$post_id}";
+            $deletePostByID = mysqli_query($connection, $query);
+            confirmQuery($deletePostByID);
+            if(isset($_GET['author_id'])) {
 
-            header("Location: ./posts.php");
+                $author_id = escape($_GET['author_id']);
+                header("Location: ./posts.php?author_id={$author_id}");
+
+            } else {
+
+                header("Location: ./posts.php");
+            }
         }
     }
 
@@ -704,31 +758,26 @@
 
         if(isset($_POST['create_user'])) {
 
-            $username = $_POST['username'];
-            $user_firstname = $_POST['user_firstname'];
-            $user_lastname = $_POST['user_lastname'];
-            $user_email = $_POST['user_email'];
-            $user_password = $_POST['user_password'];
-            $user_role = $_POST['user_role'];
+            if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
 
-            // Clean potential malicious SQL injections
-            $username = mysqli_real_escape_string($connection, $username);
-            $user_firstname = mysqli_real_escape_string($connection, $user_firstname);
-            $user_lastname = mysqli_real_escape_string($connection, $user_lastname);
-            $user_email = mysqli_real_escape_string($connection, $user_email);
-            $user_password = mysqli_real_escape_string($connection, $user_password);
-            $user_role = mysqli_real_escape_string($connection, $user_role);
+                $username = escape($_POST['username']);
+                $user_firstname = escape($_POST['user_firstname']);
+                $user_lastname = escape($_POST['user_lastname']);
+                $user_email = escape($_POST['user_email']);
+                $user_password = escape($_POST['user_password']);
+                $user_role = escape($_POST['user_role']);
 
-            $hashed_password = password_hash($user_password, PASSWORD_BCRYPT, array('cost' => 12));
+                $hashed_password = password_hash($user_password, PASSWORD_BCRYPT, array('cost' => 12));
 
-            $query = "INSERT INTO users(username, user_firstname, user_lastname, user_email, user_password, user_role) ";
-            $query .= "VALUES('{$username}', '{$user_firstname}', '{$user_lastname}', '{$user_email}', '{$hashed_password}', '{$user_role}')";
+                $query = "INSERT INTO users(username, user_firstname, user_lastname, user_email, user_password, user_role) ";
+                $query .= "VALUES('{$username}', '{$user_firstname}', '{$user_lastname}', '{$user_email}', '{$hashed_password}', '{$user_role}')";
 
-            $addUser = mysqli_query($connection, $query);
-            confirmQuery($addUser);
-            echo "<h2>New user created: {$username} </h3>";
-            echo "<a href='./users.php' role='button' class='btn btn-default'> View All Users </a>";
-            // header("Location: ./users.php");
+                $addUser = mysqli_query($connection, $query);
+                confirmQuery($addUser);
+                echo "<h2>New user created: {$username} </h3>";
+                echo "<a href='./users.php' role='button' class='btn btn-default'> View All Users </a>";
+                // header("Location: ./users.php");
+            }
         }
     }
 
@@ -737,31 +786,34 @@
 
         global $connection;
 
-        $query = "SELECT * FROM users";
-        $selectAllUsers = mysqli_query($connection, $query);
+        if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
 
-        while($row = mysqli_fetch_assoc($selectAllUsers)) {
+            $query = "SELECT * FROM users";
+            $selectAllUsers = mysqli_query($connection, $query);
 
-            $user_id = $row['user_id'];
-            $username = $row['username'];
-            $user_firstname = $row['user_firstname'];
-            $user_lastname = $row['user_lastname'];
-            $user_email = $row['user_email'];
-            $user_role = $row['user_role'];
+            while($row = mysqli_fetch_assoc($selectAllUsers)) {
 
-            // Display results as table row
-            echo "<tr>";
-                echo "<td> {$user_id} </td>";
-                echo "<td> {$username} </td>";
-                echo "<td> {$user_firstname} </td>";
-                echo "<td> {$user_lastname} </td>";
-                echo "<td> {$user_email} </td>";
-                echo "<td> {$user_role} </td>";
-                echo "<td><a href='./users.php?change_to_admin={$user_id}'> Admin </a></td>";
-                echo "<td><a href='./users.php?change_to_subscriber={$user_id}'> Subscriber </a></td>";
-                echo "<td><a href='./users.php?source=edit_user&edit_user_id={$user_id}'> Edit </a></td>";
-            echo "<td><a href='./users.php?delete_user_id={$user_id}'> Delete </a></td>";
-            echo "</tr>";
+                $user_id = $row['user_id'];
+                $username = $row['username'];
+                $user_firstname = $row['user_firstname'];
+                $user_lastname = $row['user_lastname'];
+                $user_email = $row['user_email'];
+                $user_role = $row['user_role'];
+
+                // Display results as table row
+                echo "<tr>";
+                    echo "<td> {$user_id} </td>";
+                    echo "<td> {$username} </td>";
+                    echo "<td> {$user_firstname} </td>";
+                    echo "<td> {$user_lastname} </td>";
+                    echo "<td> {$user_email} </td>";
+                    echo "<td> {$user_role} </td>";
+                    echo "<td><a href='./users.php?change_to_admin={$user_id}'> Admin </a></td>";
+                    echo "<td><a href='./users.php?change_to_subscriber={$user_id}'> Subscriber </a></td>";
+                    echo "<td><a href='./users.php?source=edit_user&edit_user_id={$user_id}'> Edit </a></td>";
+                echo "<td><a href='./users.php?delete_user_id={$user_id}'> Delete </a></td>";
+                echo "</tr>";
+            }
         }
     }
 
@@ -772,61 +824,56 @@
 
         if(isset($_POST['update_user'])) {
 
-            $username = $_POST['username'];
-            $user_firstname = $_POST['user_firstname'];
-            $user_lastname = $_POST['user_lastname'];
-            $user_email = $_POST['user_email'];
-            $user_password = $_POST['user_password'];
-            $user_role = isset($_POST['user_role']) ? $_POST['user_role'] : "";
+            if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
 
-            // Clean potential malicious SQL injections
-            $username = mysqli_real_escape_string($connection, $username);
-            $user_firstname = mysqli_real_escape_string($connection, $user_firstname);
-            $user_lastname = mysqli_real_escape_string($connection, $user_lastname);
-            $user_email = mysqli_real_escape_string($connection, $user_email);
-            $user_password = mysqli_real_escape_string($connection, $user_password);
-            $user_role = mysqli_real_escape_string($connection, $user_role);
+                $username = escape($_POST['username']);
+                $user_firstname = escape($_POST['user_firstname']);
+                $user_lastname = escape($_POST['user_lastname']);
+                $user_email = escape($_POST['user_email']);
+                $user_password = escape($_POST['user_password']);
+                $user_role = isset($_POST['user_role']) ? escape($_POST['user_role']) : "";
 
-            $query = "UPDATE users SET ";
-            $query .= "username = '{$username}', ";
-            $query .= "user_firstname = '{$user_firstname}', ";
-            $query .= "user_lastname = '{$user_lastname}', ";
+                $query = "UPDATE users SET ";
+                $query .= "username = '{$username}', ";
+                $query .= "user_firstname = '{$user_firstname}', ";
+                $query .= "user_lastname = '{$user_lastname}', ";
 
-            if(!empty($user_password)) {
+                if(!empty($user_password)) {
 
-                $hashed_password = password_hash($user_password, PASSWORD_BCRYPT, array('cost' => 12));
-                $query .= "user_password = '{$hashed_password}', ";
-            }
+                    $hashed_password = password_hash($user_password, PASSWORD_BCRYPT, array('cost' => 12));
+                    $query .= "user_password = '{$hashed_password}', ";
+                }
 
-            if(!empty($user_role)) {
+                if(!empty($user_role)) {
 
-                $query .= "user_role = '{$user_role}', ";
-            }
+                    $query .= "user_role = '{$user_role}', ";
+                }
 
-            $query .= "user_email = '{$user_email}' ";
-            $query .= "WHERE user_id = {$user_id} ";
+                $query .= "user_email = '{$user_email}' ";
+                $query .= "WHERE user_id = {$user_id} ";
 
-            $updateUserByID = mysqli_query($connection, $query);
-            if(confirmQuery($updateUserByID)) {
+                $updateUserByID = mysqli_query($connection, $query);
+                if(confirmQuery($updateUserByID)) {
 
-                if($user_id == $_SESSION['user_id']) {
+                    if($user_id == $_SESSION['user_id']) {
 
-                    $query = "SELECT * FROM users WHERE user_id = '{$user_id}'";
-                    $selectUserByID = mysqli_query($connection, $query);
-                    if(confirmQuery($selectUserByID)) {
+                        $query = "SELECT * FROM users WHERE user_id = '{$user_id}'";
+                        $selectUserByID = mysqli_query($connection, $query);
+                        if(confirmQuery($selectUserByID)) {
 
-                        while($row = mysqli_fetch_assoc($selectUserByID)) {
+                            while($row = mysqli_fetch_assoc($selectUserByID)) {
 
-                            $_SESSION['user_id'] = $row['user_id'];
-                            $_SESSION['user_firstname'] = $row['user_firstname'];
-                            $_SESSION['user_lastname'] = $row['user_lastname'];
-                            $_SESSION['user_role'] = $row['user_role'];
+                                $_SESSION['user_id'] = $row['user_id'];
+                                $_SESSION['user_firstname'] = $row['user_firstname'];
+                                $_SESSION['user_lastname'] = $row['user_lastname'];
+                                $_SESSION['user_role'] = $row['user_role'];
+                            }
                         }
                     }
+                    echo "<p class='bg-success'>User <em>{$username}</em> updated. ";
+                    echo "<a href='./users.php'> View All Users </a></p>";
+                    // header("Location: ./users.php");
                 }
-                echo "<p class='bg-success'>User <em>{$username}</em> updated. ";
-                echo "<a href='./users.php'> View All Users </a></p>";
-                // header("Location: ./users.php");
             }
         }
     }
@@ -837,21 +884,25 @@
 
         if(isset($_GET['change_to_admin']) || isset($_GET['change_to_subscriber'])) {
 
-            if(isset($_GET['change_to_admin'])) {
+            if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
 
-                $user_id = $_GET['change_to_admin'];
-                $user_role = 'Admin';
 
-            } elseif(isset($_GET['change_to_subscriber'])) {
+                if(isset($_GET['change_to_admin'])) {
 
-                $user_id = $_GET['change_to_subscriber'];
-                $user_role = 'Subscriber';
+                    $user_id = escape($_GET['change_to_admin']);
+                    $user_role = 'Admin';
+
+                } elseif(isset($_GET['change_to_subscriber'])) {
+
+                    $user_id = escape($_GET['change_to_subscriber']);
+                    $user_role = 'Subscriber';
+                }
+
+                $query = "UPDATE users SET user_role = '{$user_role}' WHERE user_id = {$user_id}";
+                $updateUserByID = mysqli_query($connection, $query);
+                confirmQuery($updateUserByID);
+                header("Location: ./users.php");
             }
-
-            $query = "UPDATE users SET user_role = '{$user_role}' WHERE user_id = {$user_id}";
-            $updateUserByID = mysqli_query($connection, $query);
-            confirmQuery($updateUserByID);
-            header("Location: ./users.php");
         }
     }
 
@@ -862,11 +913,14 @@
 
         if(isset($_GET['delete_user_id'])) {
 
-            $user_id = $_GET['delete_user_id'];
-            $query = "DELETE FROM users WHERE user_id = {$user_id}";
-            $deleteUserByID = mysqli_query($connection, $query);
-            confirmQuery($deleteUserByID);
-            header("Location: ./users.php");
+            if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
+
+                $user_id = escape($_GET['delete_user_id']);
+                $query = "DELETE FROM users WHERE user_id = {$user_id}";
+                $deleteUserByID = mysqli_query($connection, $query);
+                confirmQuery($deleteUserByID);
+                header("Location: ./users.php");
+            }
         }
     }
 

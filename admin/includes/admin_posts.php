@@ -7,7 +7,7 @@
         <?php 
 
             if(isset($_GET['source'])) {
-                $source = mysqli_real_escape_string($connection, $_GET['source']);
+                $source = escape($_GET['source']);
             } else {
                 $source = '';
             }
