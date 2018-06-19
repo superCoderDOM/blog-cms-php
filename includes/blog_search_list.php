@@ -1,6 +1,8 @@
 <!-- Blog Post List -->
 <?php
 
+    $search = mysqli_real_escape_string($connection, $search);
+
     $query = "SELECT * FROM posts 
         WHERE post_tags LIKE '%$search%' 
         AND post_status = 'Published'";
@@ -15,7 +17,7 @@
         $pages = ceil($postCount / $postsPerPage);
 
         if(isset($_GET['page'])) {
-            $page = $_GET['page'];
+            $page = mysqli_real_escape_string($connection, $_GET['page']);
         } else {
             $page = 1;
         }

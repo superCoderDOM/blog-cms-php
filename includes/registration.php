@@ -8,18 +8,12 @@
 
                         if(isset($_POST['submit_registration'])) {
 
-                            $username = $_POST['username'];
-                            $user_email = $_POST['email'];
-                            $user_password = $_POST['password'];
-                            $user_role = 'Subscriber';
+                            $username = mysqli_real_escape_string($connection, $_POST['username']);
+                            $user_email = mysqli_real_escape_string($connection, $_POST['email']);
+                            $user_password = mysqli_real_escape_string($connection, $_POST['password']);
+                            $user_role = mysqli_real_escape_string($connection, 'Subscriber');
 
                             if(!empty($username) && !empty($user_email) && !empty($user_password)) {
-
-                                // Clean potential malicious SQL injections
-                                $username = mysqli_real_escape_string($connection, $username);
-                                $user_email = mysqli_real_escape_string($connection, $user_email);
-                                $user_password = mysqli_real_escape_string($connection, $user_password);
-                                $user_role = mysqli_real_escape_string($connection, $user_role);
 
                                 $hashed_password = password_hash($user_password, PASSWORD_BCRYPT, array('cost' => 12));
 

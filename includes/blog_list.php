@@ -13,7 +13,7 @@
         $pages = ceil($postCount / $postsPerPage);
 
         if(isset($_GET['page'])) {
-            $page = $_GET['page'];
+            $page = mysqli_real_escape_string($connection, $_GET['page']);
         } else {
             $page = 1;
         }

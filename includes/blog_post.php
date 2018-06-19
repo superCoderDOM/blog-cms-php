@@ -2,9 +2,9 @@
 
     if(isset($_GET['post_id'])) {
 
-        $post_id = $_GET['post_id'];
+        $post_id = mysqli_real_escape_string($connection, $_GET['post_id']);
 
-        $query = "UPDATE posts SET post_view_count = post_view_count + 1 WHERE post_id = $post_id";
+    $query = "UPDATE posts SET post_view_count = post_view_count + 1 WHERE post_id = {$post_id}";
         $updatePostViewCount = mysqli_query($connection, $query);
         if(!$updatePostViewCount) {
 
@@ -89,19 +89,13 @@
         
                                 if(isset($_POST['submit_comment'])) {
         
-                                    $comment_post_id = $post_id;
-                                    $comment_author = $_POST['comment_author'];
-                                    $comment_email = $_POST['comment_email'];
-                                    $comment_content = $_POST['comment_content'];
+                                    $comment_post_id = mysqli_real_escape_string($connection, $post_id);
+                                    $comment_author = mysqli_real_escape_string($connection, $_POST['comment_author']);
+                                    $comment_email = mysqli_real_escape_string($connection, $_POST['comment_email']);
+                                    $comment_content = mysqli_real_escape_string($connection, $_POST['comment_content']);
         
                                     if(!empty($comment_author) && !empty($comment_email) && !empty($comment_content)) {
-        
-                                        // Clean potential malicious SQL injections
-                                        $comment_post_id = mysqli_real_escape_string($connection, $comment_post_id);
-                                        $comment_author = mysqli_real_escape_string($connection, $comment_author);
-                                        $comment_email = mysqli_real_escape_string($connection, $comment_email);
-                                        $comment_content = mysqli_real_escape_string($connection, $comment_content);
-                        
+
                                         $query = "INSERT INTO comments (comment_post_id, comment_author, comment_email, comment_content) ";
                                         $query .= "VALUES ('{$comment_post_id}', '{$comment_author}', '{$comment_email}', '{$comment_content}')";
                                         $addComment = mysqli_query($connection, $query);
@@ -147,7 +141,7 @@
                             <?php 
 
                                 $query = "SELECT * FROM comments 
-                                    WHERE comment_post_id = '{$post_id}' 
+                                    WHERE comment_post_id = {$post_id} 
                                     AND comment_status = 'Approved' 
                                     ORDER BY comment_id DESC";
                                 $selectAllComments = mysqli_query($connection, $query);

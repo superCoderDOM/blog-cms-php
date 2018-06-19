@@ -13,8 +13,8 @@
 
     if(isset($_POST['login'])) {
 
-        $user_email = $_POST['user_email'];
-        $user_password = $_POST['user_password'];
+        $user_email = mysqli_real_escape_string($connection, $_POST['user_email']);
+        $user_password = mysqli_real_escape_string($connection, $_POST['user_password']);
 
         // Clean potential malicious SQL injections
         $user_email = mysqli_real_escape_string($connection, $user_email);

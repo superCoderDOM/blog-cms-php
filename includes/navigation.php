@@ -35,7 +35,7 @@
 
                             if(isset($_GET['post_id'])) {
 
-                                $post_id = $_GET['post_id'];
+                                $post_id = mysqli_real_escape_string($connection, $_GET['post_id']);
                                 echo "<li><a href='./admin/posts.php?source=edit_post&edit_post_id={$post_id}'>Edit Post</a></li>";
                             }
                         }

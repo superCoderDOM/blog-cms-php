@@ -1,6 +1,8 @@
 <!-- Blog Post List -->
 <?php
 
+    $post_author_id = mysqli_real_escape_string($connection, $post_author_id);
+
     $query = "SELECT * FROM posts 
         WHERE post_author_id = $post_author_id 
         AND post_status = 'Published'";
@@ -15,7 +17,7 @@
         $pages = ceil($postCount / $postsPerPage);
 
         if(isset($_GET['page'])) {
-            $page = $_GET['page'];
+            $page = mysqli_real_escape_string($connection, $_GET['page']);
         } else {
             $page = 1;
         }
@@ -27,7 +29,7 @@
         }
 
         $query = "SELECT * FROM posts 
-            WHERE post_author_id = $post_author_id 
+            WHERE post_author_id = {$post_author_id} 
             AND post_status = 'Published' 
             ORDER BY post_id DESC 
             LIMIT $firstPost, $postsPerPage";
@@ -56,7 +58,7 @@
                     $post_content = substr($row['post_content'], 0, 300);
     
                     // Fetch author name
-                    $query = "SELECT * FROM users WHERE user_id = $post_author_id";
+                    $query = "SELECT * FROM users WHERE user_id = {$post_author_id}";
                     $findUserAuthor = mysqli_query($connection, $query);
                     $row = mysqli_fetch_assoc($findUserAuthor);
                     $post_author_name = $row['user_firstname'] . " " . $row['user_lastname'];

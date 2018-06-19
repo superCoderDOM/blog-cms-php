@@ -8,9 +8,9 @@
         if((isset($_POST['search_submit']) && isset($_POST['search'])) || isset($_GET['search'])) {
 
             if(isset($_POST['search'])) {
-                $search = $_POST['search'];
+                $search = mysqli_real_escape_string($connection, $_POST['search']);
             } else {
-                $search = $_GET['search'];
+                $search = mysqli_real_escape_string($connection, $_GET['search']);
             }
 
             ?>
@@ -24,8 +24,8 @@
 
         } elseif(isset($_GET['cat_id'])) {
 
-            $cat_id = $_GET['cat_id'];
-            $query = "SELECT * FROM categories WHERE cat_id = '{$cat_id}'";
+            $cat_id = mysqli_real_escape_string($connection, $_GET['cat_id']);
+            $query = "SELECT * FROM categories WHERE cat_id = {$cat_id}";
             $selectCategoryByID = mysqli_query($connection, $query);
             if(!$selectCategoryByID) {
 
@@ -50,6 +50,7 @@
             }
 
         }elseif(isset($_GET['post_author_id'])) {
+            
             $post_author_id = mysqli_real_escape_string($connection, $_GET['post_author_id']);
 
             // Fetch author name

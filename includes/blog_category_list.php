@@ -1,8 +1,10 @@
 <!-- Blog Post List -->
 <?php
 
+    $cat_id = mysqli_real_escape_string($connection, $cat_id);
+
     $query = "SELECT * FROM posts 
-        WHERE post_category_id = '{$cat_id}' 
+        WHERE post_category_id = {$cat_id} 
         AND post_status = 'Published'";
     $fetchAllCategoryPosts = mysqli_query($connection, $query);
     if(!$fetchAllCategoryPosts) {
@@ -15,7 +17,7 @@
         $pages = ceil($postCount / $postsPerPage);
 
         if(isset($_GET['page'])) {
-            $page = $_GET['page'];
+            $page = mysqli_real_escape_string($connection, $_GET['page']);
         } else {
             $page = 1;
         }
@@ -27,7 +29,7 @@
         }
 
         $query = "SELECT * FROM posts 
-            WHERE post_category_id = '{$cat_id}' 
+            WHERE post_category_id = {$cat_id} 
             AND post_status = 'Published' 
             ORDER BY post_id DESC 
             LIMIT $firstPost, $postsPerPage";
