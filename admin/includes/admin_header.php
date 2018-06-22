@@ -1,13 +1,13 @@
 <?php 
 
-    require '../vendor/autoload.php';
+    ob_start();
 
+    require '../vendor/autoload.php';
 
     $dotenv = new Dotenv\Dotenv('../');
     $dotenv->load();
     $dotenv->required(['DB_HOST', 'DB_DATABASE', 'DB_USERNAME', 'DB_PASSWORD']);
 
-    ob_start();
     session_start();
 
     include "../includes/db.php";
