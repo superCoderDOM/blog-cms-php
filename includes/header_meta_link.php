@@ -5,6 +5,9 @@
 <!-- Bootstrap Core CSS -->
 <link href="./css/bootstrap.min.css" rel="stylesheet">
 
+<!-- Font Awesome -->
+<link href="./admin/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
 <!-- Custom CSS -->
 <link href="./css/blog-home.css" rel="stylesheet">
 <link href="./css/styles.css" rel="stylesheet">

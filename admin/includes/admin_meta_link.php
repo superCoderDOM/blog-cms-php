@@ -9,7 +9,7 @@
 <link href="./css/sb-admin.css" rel="stylesheet">
 <link href="./css/styles.css" rel="stylesheet">
 
-<!-- Custom Fonts -->
+<!-- Font Awesome -->
 <link href="./font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 
 <!-- Google Charts -->
