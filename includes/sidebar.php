@@ -1,21 +1,27 @@
 <!-- Blog Sidebar Widgets Column -->
 <div class="col-md-4">
 
-    <!-- Blog Login Well -->
-    <div class="well">
-        <h4>Sign In</h4>
-        <form action="./includes/login.php" method="post">
-            <div class="form-group">
-                <input type="email" name="user_email" class="form-control" placeholder="Enter your email">
+    <?php 
+        if(!isset($_SESSION['user_id'])) {
+            ?>
+            <!-- Blog Login Well -->
+            <div class="well">
+                <h4>Sign In</h4>
+                <form action="./includes/login.php" method="post">
+                    <div class="form-group">
+                        <input type="email" name="user_email" class="form-control" placeholder="Enter your email">
+                    </div>
+                    <div class="input-group">
+                        <input type="password" name="user_password" class="form-control" placeholder="Enter your password" autocomplete="off">
+                        <span class="input-group-btn">
+                            <button class="btn btn-primary" name="login" type="submit"> Login </button>
+                        </span>
+                    </div>
+                </form>
             </div>
-            <div class="input-group">
-                <input type="password" name="user_password" class="form-control" placeholder="Enter your password" autocomplete="off">
-                <span class="input-group-btn">
-                    <button class="btn btn-primary" name="login" type="submit"> Login </button>
-                </span>
-            </div>
-        </form>
-    </div>
+            <?php
+        }
+    ?>
 
     <!-- Blog Search Well -->
     <div class="well">
@@ -58,11 +64,4 @@
         </div>
         <!-- /.row -->
     </div>
-
-    <!-- Side Widget Well -->
-    <div class="well">
-        <h4>Side Widget Well</h4>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore, perspiciatis adipisci accusamus laudantium odit aliquam repellat tempore quos aspernatur vero.</p>
-    </div>
-
 </div>
