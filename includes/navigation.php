@@ -24,19 +24,19 @@
                     while($row = mysqli_fetch_assoc($allCategories)) {
                         $cat_id = $row['cat_id'];
                         $cat_title = $row['cat_title'];
-                        echo "<li><a href='./index.php?cat_id={$cat_id}'>{$cat_title}</a></li>";
+                        echo "<li><a href='./index.php?cat_id={$cat_id}'> {$cat_title} </a></li>";
                     }
 
                     if(isset($_SESSION['user_role'])) {
 
                         if($_SESSION['user_role'] === 'Admin') {
 
-                            echo "<li><a href='./admin/index.php'>Admin</a></li>";
+                            echo "<li><a href='./admin/index.php'> Admin </a></li>";
 
                             if(isset($_GET['post_id'])) {
 
                                 $post_id = mysqli_real_escape_string($connection, $_GET['post_id']);
-                                echo "<li><a href='./admin/posts.php?source=edit_post&edit_post_id={$post_id}'>Edit Post</a></li>";
+                                echo "<li><a href='./admin/posts.php?source=edit_post&edit_post_id={$post_id}'> Edit Post </a></li>";
                             }
                         }
 
@@ -44,8 +44,8 @@
 
                         echo "<li><a href='./registration.php'>Register</a></li>";
                     }
-
                 ?>
+                <li><a href='./contact.php'> Contact </a></li>
             </ul>
         </div>
         <!-- /.navbar-collapse -->
