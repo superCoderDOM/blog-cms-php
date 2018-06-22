@@ -1,8 +1,12 @@
 <?php 
 
+    include "./includes/delete_modal.php";
+
     if(isset($_POST['checkBoxArray'])) {
 
-        foreach(escape($_POST['checkBoxArray']) as $post_id) {
+        foreach($_POST['checkBoxArray'] as $post_id) {
+
+            $post_id = escape($post_id);
 
             $bulk_option = escape($_POST['bulk_option']);
 
@@ -82,3 +86,27 @@
         </tbody>
     </table>
 </form>
+
+<script src="./js/jquery.js"></script>
+
+<script>
+    $(document).ready(function(){
+        $(".delete_link").on("click", function(){
+
+            var post_id = $(this).attr("post_id");
+
+            if ($(this).attr("author_id")) {
+
+                var post_author_id = $(this).attr("author_id");
+                var delete_url = "./posts.php?delete_post_id=" + post_id + "&author_id=" + post_author_id;
+
+            } else {
+
+                var delete_url = "./posts.php?delete_post_id=" + post_id;
+            }
+
+            $(".modal_delete_link").attr("href", delete_url);
+            $("#myModal").modal("show");
+        });
+    });
+</script>

@@ -522,7 +522,8 @@
                     echo "<td> {$post_date} </td>";
                     echo "<td><a href='../post.php?post_id={$post_id}'> View </a></td>";
                     echo "<td><a href='./posts.php?source=edit_post&edit_post_id={$post_id}'> Edit </a></td>";
-                    echo "<td><a href='./posts.php?delete_post_id={$post_id}' onClick=\"javascript: return confirm('Are you sure you want to DELETE this post?');\"> Delete </a></td>";
+                    echo "<td><a post_id='{$post_id}' href='javascript:void(0)' class='delete_link'> Delete </a></td>";
+                    // echo "<td><a href='./posts.php?delete_post_id={$post_id}' onClick=\"javascript: return confirm('Are you sure you want to DELETE this post?');\"> Delete </a></td>";
                     echo "<td><a href='./posts.php?reset_post_id={$post_id}'> Reset </a></td>";
                 echo "</tr>";
             }
@@ -589,7 +590,8 @@
                     echo "<td> {$post_date} </td>";
                     echo "<td><a href='../post.php?post_id={$post_id}'> View </a></td>";
                     echo "<td><a href='./posts.php?source=edit_post&edit_post_id={$post_id}'> Edit </a></td>";
-                    echo "<td><a href='./posts.php?delete_post_id={$post_id}&author_id={$post_author_id}' onClick=\"javascript: return confirm('Are you sure you want to DELETE this post?');\"> Delete </a></td>";
+                    echo "<td><a post_id='{$post_id}' author_id={$post_author_id} href='javascript:void(0)' class='delete_link'> Delete </a></td>";
+                    // echo "<td><a href='./posts.php?delete_post_id={$post_id}&author_id={$post_author_id}' onClick=\"javascript: return confirm('Are you sure you want to DELETE this post?');\"> Delete </a></td>";
                     echo "<td><a href='./posts.php?reset_post_id={$post_id}&author_id={$post_author_id}'> Reset </a></td>";
                 echo "</tr>";
             }
