@@ -80,6 +80,26 @@
     }
     onlineUserCount();
 
+    function allRecordsCount($table) {
+
+        global $connection;
+
+        $query = "SELECT * FROM $table";
+        $selectAllRecords = mysqli_query($connection, $query);
+        confirmQuery($selectAllRecords);
+        return mysqli_num_rows($selectAllRecords);
+    }
+
+    function selectRecordsCount($table, $column, $value) {
+
+        global $connection;
+
+        $query = "SELECT * FROM $table WHERE $column = '{$value}'";
+        $selectAllRecords = mysqli_query($connection, $query);
+        confirmQuery($selectAllRecords);
+        return mysqli_num_rows($selectAllRecords);
+    }
+
     /*----------------------------------+
     |           CATEGORIES              |
     +----------------------------------*/

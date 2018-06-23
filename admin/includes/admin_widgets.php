@@ -8,15 +8,7 @@
                         <i class="fa fa-file-text fa-5x"></i>
                     </div>
                     <div class="col-xs-9 text-right">
-                        <?php 
-
-                            $query = "SELECT * FROM posts";
-                            $selectAllPosts = mysqli_query($connection, $query);
-                            $post_count = mysqli_num_rows($selectAllPosts);
-
-                            echo "<div class='huge'>{$post_count}</div>";
-
-                        ?>
+                        <div class='huge'><?php echo $post_count = allRecordsCount('posts'); ?></div>
                         <div> Posts </div>
                     </div>
                 </div>
@@ -38,16 +30,8 @@
                         <i class="fa fa-comments fa-5x"></i>
                     </div>
                     <div class="col-xs-9 text-right">
-                    <?php 
-
-                        $query = "SELECT * FROM comments";
-                        $selectAllComments = mysqli_query($connection, $query);
-                        $comment_count = mysqli_num_rows($selectAllComments);
-
-                        echo "<div class='huge'>{$comment_count}</div>";
-
-                    ?>
-                  <div> Comments </div>
+                        <div class='huge'><?php echo $comment_count = allRecordsCount('comments'); ?></div>
+                        <div> Comments </div>
                     </div>
                 </div>
             </div>
@@ -68,16 +52,8 @@
                         <i class="fa fa-users fa-5x"></i>
                     </div>
                     <div class="col-xs-9 text-right">
-                    <?php 
-
-                        $query = "SELECT * FROM users";
-                        $selectAllUsers = mysqli_query($connection, $query);
-                        $user_count = mysqli_num_rows($selectAllUsers);
-
-                        echo "<div class='huge'>{$user_count}</div>";
-
-                    ?>
-                    <div> Users </div>
+                        <div class='huge'><?php echo $user_count = allRecordsCount('users'); ?></div>
+                        <div> Users </div>
                     </div>
                 </div>
             </div>
@@ -98,16 +74,8 @@
                         <i class="fa fa-list fa-5x"></i>
                     </div>
                     <div class="col-xs-9 text-right">
-                    <?php 
-
-                        $query = "SELECT * FROM categories";
-                        $selectAllCategories = mysqli_query($connection, $query);
-                        $category_count = mysqli_num_rows($selectAllCategories);
-
-                        echo "<div class='huge'>{$category_count}</div>";
-
-                    ?>
-                     <div> Categories </div>
+                        <div class='huge'><?php echo $category_count = allRecordsCount('categories'); ?></div>
+                        <div> Categories </div>
                     </div>
                 </div>
             </div>
@@ -124,23 +92,10 @@
 
 <!-- Google Chart -->
 <?php
-
-    $query = "SELECT * FROM posts WHERE post_status = 'Published'";
-    $selectAllPublishedPosts = mysqli_query($connection, $query);
-    $post_published_count = mysqli_num_rows($selectAllPublishedPosts);
-
-    $query = "SELECT * FROM posts WHERE post_status = 'Draft'";
-    $selectAllDraftPosts = mysqli_query($connection, $query);
-    $post_draft_count = mysqli_num_rows($selectAllDraftPosts);
-
-    $query = "SELECT * FROM comments WHERE comment_status = 'Submitted'";
-    $selectAllSubmittedComments = mysqli_query($connection, $query);
-    $comment_submitted_count = mysqli_num_rows($selectAllSubmittedComments);
-
-    $query = "SELECT * FROM users WHERE user_role = 'Subscriber'";
-    $selectAllSubscriberUsers = mysqli_query($connection, $query);
-    $user_subscriber_count = mysqli_num_rows($selectAllSubscriberUsers);
-
+    $post_published_count = selectRecordsCount('posts', 'post_status', 'Published');
+    $post_draft_count = selectRecordsCount('posts', 'post_status', 'Draft');
+    $comment_submitted_count = selectRecordsCount('comments', 'comment_status', 'Submitted');
+    $user_subscriber_count = selectRecordsCount('users', 'user_role', 'Subscriber');
 ?>
 
 <div class="row">
