@@ -1,3 +1,10 @@
+<?php 
+    if(!userIsAdmin($_SESSION['user_id'])) {
+
+        header("Location: index.php");
+    }
+?>
+
 <table class="table table-bordered table-hover">
     <thead class="thead-dark">
         <tr>

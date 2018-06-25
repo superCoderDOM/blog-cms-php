@@ -19,7 +19,6 @@
             $user_role = $row['user_role'];
 
             updateUser($user_id);
-
             ?>
 
             <!-- Edit User Form -->

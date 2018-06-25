@@ -62,12 +62,18 @@
                     }
 
                     if(isset($_SESSION['user_id'])) {
+
+                        if(empty($_SESSION['user_firstname']) && empty($_SESSION['user_lastname'])) {
+                            $user_name = $_SESSION['username'];
+                        } else {
+                            $user_name = $_SESSION['user_firstname'] . " " . $_SESSION['user_lastname'];
+                        }
                         ?>
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> <?php echo $_SESSION['user_firstname'] . " " . $_SESSION['user_lastname']; ?> <b class="caret"></b></a>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> <?php echo $user_name; ?> <b class="caret"></b></a>
                             <ul class="dropdown-menu">
                                 <li>
-                                    <a href="./profile.php"><i class="fa fa-fw fa-user"></i> Profile </a>
+                                    <a href="./admin/profile.php"><i class="fa fa-fw fa-user"></i> Profile </a>
                                 </li>
                                 <li>
                                     <a href="#"><i class="fa fa-fw fa-gear"></i> Settings </a>

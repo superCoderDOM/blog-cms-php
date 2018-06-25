@@ -100,6 +100,70 @@
         return mysqli_num_rows($selectAllRecords);
     }
 
+    function userIsAdmin($user_id) {
+
+        global $connection;
+
+        $query = "SELECT user_role FROM users WHERE user_id = $user_id";
+        $queryResults = mysqli_query($connection, $query);
+        if(confirmQuery($queryResults)) {
+
+            $row = mysqli_fetch_array($queryResults);
+
+            if($row['user_role'] === 'Admin') {
+
+                return true;
+
+            } else {
+
+                return false;
+            }
+        }
+    }
+
+    function usernameExists($username) {
+
+        global $connection;
+
+        $query = "SELECT username FROM users WHERE username = '{$username}'";
+        $queryResults = mysqli_query($connection, $query);
+        if(confirmQuery($queryResults)) {
+
+            if(mysqli_num_rows($queryResults) > 0) {
+
+                return true;
+
+            } else {
+
+                return false;
+            }
+        }
+    }
+
+    function userEmailExists($user_email) {
+
+        global $connection;
+
+        $query = "SELECT user_email FROM users WHERE user_email = '{$user_email}'";
+        $queryResults = mysqli_query($connection, $query);
+        if(confirmQuery($queryResults)) {
+
+            if(mysqli_num_rows($queryResults) > 0) {
+
+                return true;
+
+            } else {
+
+                return false;
+            }
+        }
+    }
+
+    function redirect($location) {
+
+        header("Location: " . $location);
+    }
+
     /*----------------------------------+
     |           CATEGORIES              |
     +----------------------------------*/
@@ -177,7 +241,7 @@
         
                 $updateCategoryByID = mysqli_query($connection, $query);
                 confirmQuery($updateCategoryByID);
-                header("Location: ./categories.php");
+                redirect("./categories.php");
             }
         }
     }
@@ -196,7 +260,7 @@
                 $query = "DELETE FROM categories WHERE cat_id = {$cat_id}";
                 $deleteCategoryByID = mysqli_query($connection, $query);
                 confirmQuery($deleteCategoryByID);
-                header("Location: ./categories.php");
+                redirect("./categories.php");
             }
         }
     }
@@ -204,7 +268,6 @@
     /*--------------------------------+
     |           COMMENTS              |
     +--------------------------------*/
-
 
     // CREATE
     function createComment() {
@@ -227,7 +290,7 @@
 
                     $addComment = mysqli_query($connection, $query);
                     confirmQuery($addcomment);
-                    header("Location: ./posts.php?post_id={$comment_post_id}");
+                    redirect("./posts.php?post_id={$comment_post_id}");
 
                 } else {
 
@@ -361,11 +424,11 @@
                 if(isset($_GET['post_id'])) {
 
                     $post_id = escape($_GET['post_id']);
-                    header("Location: ./comments.php?post_id={$post_id}");
+                    redirect("./comments.php?post_id={$post_id}");
 
                 } else {
 
-                    header("Location: ./comments.php");
+                    redirect("./comments.php");
                 }
             }
         }
@@ -388,11 +451,11 @@
                 if(isset($_GET['post_id'])) {
 
                     $post_id = escape($_GET['post_id']);
-                    header("Location: ./comments.php?post_id={$post_id}");
+                    redirect("./comments.php?post_id={$post_id}");
 
                 } else {
 
-                    header("Location: ./comments.php");
+                    redirect("./comments.php");
                 }
             }
         }
@@ -431,7 +494,7 @@
                 confirmQuery($addPost);
 
                 // echo "<p class='bg-success'>Post Created. <a href='../post.php?post_id={$post_id}'> View Post </a> or <a href='./posts.php'> View All Posts </a></p>";
-                header("Location: ./posts.php");
+                redirect("./posts.php");
             }
         }
     }
@@ -473,11 +536,11 @@
                 if(isset($_GET['author_id'])) {
 
                     $author_id = escape($_GET['author_id']);
-                    header("Location: ./posts.php?author_id={$author_id}");
+                    redirect("./posts.php?author_id={$author_id}");
         
                 } else {
         
-                    header("Location: ./posts.php");
+                    redirect("./posts.php");
                 }
             }
         }
@@ -490,14 +553,20 @@
 
         if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
 
-            $query = "SELECT * FROM posts ORDER BY post_id DESC";
+            // $query = "SELECT * FROM posts ORDER BY post_id DESC";
+            $query = "SELECT posts.post_id, posts.post_title, posts.post_author_id, posts.post_date, posts.post_image, posts.post_content, posts.post_tags, posts.post_view_count, posts.post_status, ";
+            $query .= "categories.cat_title, users.user_firstname, users.user_lastname ";
+            $query .= "FROM posts ";
+            $query .= "LEFT JOIN categories ON posts.post_category_id = categories.cat_id ";
+            $query .= "LEFT JOIN users ON posts.post_author_id = users.user_id ";
+            $query .= "ORDER BY posts.post_id DESC";
             $allPosts = mysqli_query($connection, $query);
             confirmQuery($allPosts);
 
             while($row = mysqli_fetch_assoc($allPosts)) {
 
                 $post_id = $row['post_id'];
-                $post_category_id = $row['post_category_id'];
+                // $post_category_id = $row['post_category_id'];
                 $post_title = $row['post_title'];
                 $post_author_id = $row['post_author_id'];
                 $post_date = $row['post_date'];
@@ -506,20 +575,22 @@
                 $post_tags = $row['post_tags'];
                 $post_view_count = $row['post_view_count'];
                 $post_status = $row['post_status'];
-
-                // Fetch author name
-                $query = "SELECT * FROM users WHERE user_id = $post_author_id";
-                $findUserAuthor = mysqli_query($connection, $query);
-                confirmQuery($findUserAuthor);
-                $row = mysqli_fetch_assoc($findUserAuthor);
+                $post_category_title = $row['cat_title'];
                 $post_author_name = $row['user_firstname'] . " " . $row['user_lastname'];
 
+                // Fetch author name
+                // $query = "SELECT * FROM users WHERE user_id = $post_author_id";
+                // $findUserAuthor = mysqli_query($connection, $query);
+                // confirmQuery($findUserAuthor);
+                // $row = mysqli_fetch_assoc($findUserAuthor);
+                // $post_author_name = $row['user_firstname'] . " " . $row['user_lastname'];
+
                 // Fecth category title
-                $query = "SELECT * FROM categories WHERE cat_id = {$post_category_id}";
-                $selectCategoryByID = mysqli_query($connection, $query);
-                confirmQuery($selectCategoryByID);
-                $row = mysqli_fetch_assoc($selectCategoryByID);
-                $post_category_title = $row['cat_title'];
+                // $query = "SELECT * FROM categories WHERE cat_id = {$post_category_id}";
+                // $selectCategoryByID = mysqli_query($connection, $query);
+                // confirmQuery($selectCategoryByID);
+                // $row = mysqli_fetch_assoc($selectCategoryByID);
+                // $post_category_title = $row['cat_title'];
 
                 // Fetch comment count
                 $query = "SELECT * FROM comments WHERE comment_post_id = '{$post_id}'";
@@ -664,7 +735,7 @@
                 confirmQuery($updatePostByID);
 
                 echo "<p class='bg-success'>Post Updated. <a href='../post.php?post_id={$post_id}'> View Post </a> or <a href='./posts.php'> Edit More Posts </a></p>";
-                // header("Location: ./posts.php");
+                // redirect("./posts.php");
             }
         }
     }
@@ -684,11 +755,11 @@
             if(isset($_GET['author_id'])) {
 
                 $author_id = escape($_GET['author_id']);
-                header("Location: ./posts.php?author_id={$author_id}");
+                redirect("./posts.php?author_id={$author_id}");
 
             } else {
 
-                header("Location: ./posts.php");
+                redirect("./posts.php");
             }
         }
     }
@@ -709,11 +780,11 @@
                 if(isset($_GET['author_id'])) {
 
                     $author_id = escape($_GET['author_id']);
-                    header("Location: ./posts.php?author_id={$author_id}");
+                    redirect("./posts.php?author_id={$author_id}");
         
                 } else {
         
-                    header("Location: ./posts.php");
+                    redirect("./posts.php");
                 }
             }
         }
@@ -736,11 +807,11 @@
                 if(isset($_GET['author_id'])) {
 
                     $author_id = escape($_GET['author_id']);
-                    header("Location: ./posts.php?author_id={$author_id}");
+                    redirect("./posts.php?author_id={$author_id}");
         
                 } else {
         
-                    header("Location: ./posts.php");
+                    redirect("./posts.php");
                 }
             }
         }
@@ -760,11 +831,11 @@
             if(isset($_GET['author_id'])) {
 
                 $author_id = escape($_GET['author_id']);
-                header("Location: ./posts.php?author_id={$author_id}");
+                redirect("./posts.php?author_id={$author_id}");
 
             } else {
 
-                header("Location: ./posts.php");
+                redirect("./posts.php");
             }
         }
     }
@@ -789,16 +860,127 @@
                 $user_password = escape($_POST['user_password']);
                 $user_role = escape($_POST['user_role']);
 
+                if(usernameExists($username)) {
+
+                    echo "<p class='bg-danger'> Username already exists </p>";
+
+                } elseif(userEmailExists($user_email)) {
+
+                    echo "<p class='bg-danger'> User email already exists </p>";
+
+                } else {
+
+                    $hashed_password = password_hash($user_password, PASSWORD_BCRYPT, array('cost' => 12));
+                    
+                    $query = "INSERT INTO users(username, user_firstname, user_lastname, user_email, user_password, user_role) ";
+                    $query .= "VALUES('{$username}', '{$user_firstname}', '{$user_lastname}', '{$user_email}', '{$hashed_password}', '{$user_role}')";
+                    $addUser = mysqli_query($connection, $query);
+                    if(confirmQuery($addUser)) {
+
+                        echo "<h2>New user created: {$username} </h3>";
+                        echo "<a href='./users.php' role='button' class='btn btn-default'> View All Users </a>";
+                        // redirect("./users.php");
+                    }
+                }
+            }
+        }
+    }
+
+    function registerUser() {
+
+        global $connection;
+
+        if(isset($_POST['submit_registration'])) {
+
+            $username = escape($_POST['username']);
+            $user_email = escape($_POST['email']);
+            $user_password = escape($_POST['password']);
+            $user_role = escape('Subscriber');
+
+            $errors = [
+                'username' => '',
+                'email' => '',
+                'password' => ''
+            ];
+
+            // Validation
+            if($username === '') {
+
+                $errors['username'] = "Username field cannot be empty";
+
+            } elseif(strlen($username) < 4) {
+
+                $errors['username'] = "Username must have at least 5 characters";
+
+            } elseif(usernameExists($username)) {
+
+                $errors['username'] = "Username already exists";
+            }
+
+            if($user_email === '') {
+                
+                $errors['email'] = "Email field cannot be empty";
+
+            } elseif(!filter_var($user_email, FILTER_VALIDATE_EMAIL)) {
+
+                $errors['email'] = "Invalid email format"; 
+
+            } elseif(userEmailExists($user_email)) {
+
+                $errors['email'] = "Email already exists";
+            }
+
+            if($user_password === '') {
+
+                $errors['password'] = "Password field cannot be empty";
+            }
+
+            if(empty($errors['username']) && empty($errors['email']) && empty($errors['password'])) {
+
                 $hashed_password = password_hash($user_password, PASSWORD_BCRYPT, array('cost' => 12));
 
-                $query = "INSERT INTO users(username, user_firstname, user_lastname, user_email, user_password, user_role) ";
-                $query .= "VALUES('{$username}', '{$user_firstname}', '{$user_lastname}', '{$user_email}', '{$hashed_password}', '{$user_role}')";
-
+                $query = "INSERT INTO users(username, user_email, user_password, user_role) ";
+                $query .= "VALUES('{$username}', '{$user_email}', '{$hashed_password}', '{$user_role}')";
                 $addUser = mysqli_query($connection, $query);
-                confirmQuery($addUser);
-                echo "<h2>New user created: {$username} </h3>";
-                echo "<a href='./users.php' role='button' class='btn btn-default'> View All Users </a>";
-                // header("Location: ./users.php");
+                if(confirmQuery($addUser)) {
+                    
+                    logUserIn($user_email, $user_password);
+                }
+
+            } else {
+
+                return $errors;
+            }
+        }
+    }
+
+    function logUserIn($user_email, $user_password) {
+
+        global $connection;
+
+        $user_email = escape($user_email);
+        $user_password = escape($user_password);
+
+        $query = "SELECT * FROM users WHERE user_email = '{$user_email}'";
+        $selectUserByEmail = mysqli_query($connection, $query);
+        if(confirmQuery($selectUserByEmail)) {
+
+            $row = mysqli_fetch_assoc($selectUserByEmail);
+
+            if(password_verify($user_password, $row['user_password'])) {
+
+                $_SESSION['user_id'] = $row['user_id'];
+                $_SESSION['username'] = $row['username'];
+                $_SESSION['user_firstname'] = $row['user_firstname'];
+                $_SESSION['user_lastname'] = $row['user_lastname'];
+                // $_SESSION['user_email'] = $row['user_email'];
+                $_SESSION['user_role'] = $row['user_role'];
+
+                redirect("../admin/index.php");  // redirects to CMS Administration Dashboard
+
+            } else {
+
+                redirect("../index.php");  // redirects to Homepage
             }
         }
     }
@@ -846,7 +1028,8 @@
 
         if(isset($_POST['update_user'])) {
 
-            if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
+            // if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
+            if(isset($_SESSION['user_role'])) {
 
                 $username = escape($_POST['username']);
                 $user_firstname = escape($_POST['user_firstname']);
@@ -892,9 +1075,20 @@
                             }
                         }
                     }
-                    echo "<p class='bg-success'>User <em>{$username}</em> updated. ";
-                    echo "<a href='./users.php'> View All Users </a></p>";
-                    // header("Location: ./users.php");
+
+                    if($_SESSION['user_role'] !== 'Admin') {
+
+                        // $message = "<p class='bg-success'>User <em>{$username}</em> updated. ";
+                        // return $message;
+                        redirect("./profile.php");
+
+                    } else {
+
+                        // $message = "<p class='bg-success'>User <em>{$username}</em> updated. ";
+                        // $message .= "<a href='./users.php'> View All Users </a></p>";
+                        // return $message;
+                        redirect("./profile.php");
+                    }
                 }
             }
         }
@@ -923,7 +1117,7 @@
                 $query = "UPDATE users SET user_role = '{$user_role}' WHERE user_id = {$user_id}";
                 $updateUserByID = mysqli_query($connection, $query);
                 confirmQuery($updateUserByID);
-                header("Location: ./users.php");
+                redirect("./users.php");
             }
         }
     }
@@ -941,9 +1135,8 @@
                 $query = "DELETE FROM users WHERE user_id = {$user_id}";
                 $deleteUserByID = mysqli_query($connection, $query);
                 confirmQuery($deleteUserByID);
-                header("Location: ./users.php");
+                redirect("./users.php");
             }
         }
     }
-
 ?>
