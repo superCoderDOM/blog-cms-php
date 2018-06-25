@@ -186,13 +186,15 @@
 
                 } else {
 
-                    // Clean potential malicious SQL injections
-                    $cat_title = mysqli_real_escape_string($connection, $cat_title);
+                    // $query = "INSERT INTO categories(cat_title) VALUE('$cat_title')";
+                    // $createCategory = mysqli_query($connection, $query);
+                    // confirmQuery($createCategory);
 
-                    $query = "INSERT INTO categories(cat_title) VALUE('$cat_title') ";
-
-                    $createCategory = mysqli_query($connection, $query);
+                    $createCategory = mysqli_prepare($connection, "INSERT INTO categories(cat_title) VALUE(?)");
+                    mysqli_stmt_bind_param($createCategory, "s", $cat_title);
+                    mysqli_stmt_execute($createCategory);
                     confirmQuery($createCategory);
+                    mysqli_stmt_close($createCategory);
                 }
             }
         }
@@ -236,11 +238,14 @@
                 $cat_id = escape($cat_id);
                 $cat_title = escape($_POST['cat_title']);
 
-                $query = "UPDATE categories SET cat_title = '{$cat_title}' ";
-                $query .= "WHERE cat_id = '{$cat_id}' ";
-        
-                $updateCategoryByID = mysqli_query($connection, $query);
+                // $query = "UPDATE categories SET cat_title = '{$cat_title}' ";
+                // $query .= "WHERE cat_id = '{$cat_id}'";
+                // $updateCategoryByID = mysqli_query($connection, $query);
+                $updateCategoryByID = mysqli_prepare($connection, "UPDATE categories SET cat_title = ? WHERE cat_id = ?");
+                mysqli_stmt_bind_param($updateCategoryByID, "si", $cat_title, $cat_id);
+                mysqli_stmt_execute($updateCategoryByID);
                 confirmQuery($updateCategoryByID);
+                mysqli_stmt_close($updateCategoryByID);
                 redirect("./categories.php");
             }
         }
@@ -522,10 +527,10 @@
                     $post_tags = $row['post_tags'];
                     $post_status = $row['post_status'];
 
-                    $post_title = mysqli_real_escape_string($connection, $post_title);
-                    $post_author_id = mysqli_real_escape_string($connection, $post_author_id);
-                    $post_tags = mysqli_real_escape_string($connection, $post_tags);
-                    $post_content = mysqli_real_escape_string($connection, $post_content);
+                    $post_title = escape($post_title);
+                    $post_author_id = escape($post_author_id);
+                    $post_tags = escape($post_tags);
+                    $post_content = escape($post_content);
                 }
         
                 $query = "INSERT INTO posts(post_category_id, post_title, post_author_id, post_image, post_content, post_tags, post_status) ";
