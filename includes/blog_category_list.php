@@ -1,7 +1,7 @@
 <!-- Blog Post List -->
 <?php
 
-    $cat_id = mysqli_real_escape_string($connection, $cat_id);
+    $cat_id = escape($cat_id);
 
     if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
 
@@ -14,17 +14,13 @@
             AND post_status = 'Published'";
     }
     $fetchAllCategoryPosts = mysqli_query($connection, $query);
-    if(!$fetchAllCategoryPosts) {
-
-        die("QUERY FAILED: " . mysqli_error($connection));
-
-    } else {
+    if(confirmQuery($fetchAllCategoryPosts)) {
 
         $postCount = mysqli_num_rows($fetchAllCategoryPosts);
         $pages = ceil($postCount / $postsPerPage);
 
         if(isset($_GET['page'])) {
-            $page = mysqli_real_escape_string($connection, $_GET['page']);
+            $page = escape($_GET['page']);
         } else {
             $page = 1;
         }
@@ -56,11 +52,7 @@
                     LIMIT $firstPost, $postsPerPage";
             }
             $selectPostsByCategory = mysqli_query($connection, $query);
-            if(!$selectPostsByCategory) {
-        
-                die("QUERY FAILED: " . mysqli_error($connection));
-        
-            } else {
+            if(confirmQuery($selectPostsByCategory)) {
         
                 $count = mysqli_num_rows($selectPostsByCategory);
         

@@ -9,6 +9,8 @@
 
     session_start();
 
+    include "./admin/functions.php";
+
 ?>
 
 <!DOCTYPE html>
