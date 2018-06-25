@@ -98,14 +98,11 @@
             if ($(this).attr("author_id")) {
 
                 var post_author_id = $(this).attr("author_id");
-                var delete_url = "./posts.php?delete_post_id=" + post_id + "&author_id=" + post_author_id;
+                $("#modal_delete_author_id").attr("value", post_author_id);
 
-            } else {
-
-                var delete_url = "./posts.php?delete_post_id=" + post_id;
             }
 
-            $(".modal_delete_link").attr("href", delete_url);
+            $("#modal_delete_post_id").attr("value", post_id);
             $("#myModal").modal("show");
         });
     });

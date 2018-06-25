@@ -611,11 +611,11 @@
                     echo "<td> {$post_view_count} </td>";
                     echo "<td><a href='./comments.php?post_id={$post_id}'> {$commentCount} </a></td>";
                     echo "<td> {$post_date} </td>";
-                    echo "<td><a href='../post.php?post_id={$post_id}'> View </a></td>";
-                    echo "<td><a href='./posts.php?source=edit_post&edit_post_id={$post_id}'> Edit </a></td>";
-                    echo "<td><a post_id='{$post_id}' href='javascript:void(0)' class='delete_link'> Delete </a></td>";
+                    echo "<td><a class='btn btn-info btn-sm' href='../post.php?post_id={$post_id}'> View </a></td>";
+                    echo "<td><a class='btn btn-success btn-sm' href='./posts.php?source=edit_post&edit_post_id={$post_id}'> Edit </a></td>";
+                    echo "<td><a post_id='{$post_id}' href='javascript:void(0)' class='btn btn-danger btn-sm delete_link'> Delete </a></td>";
                     // echo "<td><a href='./posts.php?delete_post_id={$post_id}' onClick=\"javascript: return confirm('Are you sure you want to DELETE this post?');\"> Delete </a></td>";
-                    echo "<td><a href='./posts.php?reset_post_id={$post_id}'> Reset </a></td>";
+                    echo "<td><a class='btn btn-warning btn-sm' href='./posts.php?reset_post_id={$post_id}'> Reset </a></td>";
                 echo "</tr>";
             }
         }
@@ -679,11 +679,11 @@
                     echo "<td> {$post_view_count} </td>";
                     echo "<td><a href='./comments.php?post_id={$post_id}'> {$commentCount} </a></td>";
                     echo "<td> {$post_date} </td>";
-                    echo "<td><a href='../post.php?post_id={$post_id}'> View </a></td>";
-                    echo "<td><a href='./posts.php?source=edit_post&edit_post_id={$post_id}'> Edit </a></td>";
-                    echo "<td><a post_id='{$post_id}' author_id={$post_author_id} href='javascript:void(0)' class='delete_link'> Delete </a></td>";
+                    echo "<td><a class='btn btn-info btn-sm' href='../post.php?post_id={$post_id}'> View </a></td>";
+                    echo "<td><a class='btn btn-success btn-sm' href='./posts.php?source=edit_post&edit_post_id={$post_id}'> Edit </a></td>";
+                    echo "<td><a post_id='{$post_id}' author_id={$post_author_id} href='javascript:void(0)' class='btn btn-danger btn-sm delete_link'> Delete </a></td>";
                     // echo "<td><a href='./posts.php?delete_post_id={$post_id}&author_id={$post_author_id}' onClick=\"javascript: return confirm('Are you sure you want to DELETE this post?');\"> Delete </a></td>";
-                    echo "<td><a href='./posts.php?reset_post_id={$post_id}&author_id={$post_author_id}'> Reset </a></td>";
+                    echo "<td><a class='btn btn-warning btn-sm' href='./posts.php?reset_post_id={$post_id}&author_id={$post_author_id}'> Reset </a></td>";
                 echo "</tr>";
             }
         }
@@ -795,18 +795,18 @@
 
         global $connection;
 
-        if(isset($_GET['delete_post_id'])) {
+        if(isset($_POST['delete_post'])) {
 
             if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
 
-                $post_id = escape($_GET['delete_post_id']);
+                $post_id = escape($_POST['post_id']);
 
                 $query = "DELETE FROM posts WHERE post_id = {$post_id}";
                 $deletePostByID = mysqli_query($connection, $query);
                 confirmQuery($deletePostByID);
-                if(isset($_GET['author_id'])) {
+                if(!empty($_POST['author_id'])) {
 
-                    $author_id = escape($_GET['author_id']);
+                    $author_id = escape($_POST['author_id']);
                     redirect("./posts.php?author_id={$author_id}");
         
                 } else {
@@ -1012,10 +1012,13 @@
                     echo "<td> {$user_lastname} </td>";
                     echo "<td> {$user_email} </td>";
                     echo "<td> {$user_role} </td>";
-                    echo "<td><a href='./users.php?change_to_admin={$user_id}'> Admin </a></td>";
-                    echo "<td><a href='./users.php?change_to_subscriber={$user_id}'> Subscriber </a></td>";
-                    echo "<td><a href='./users.php?source=edit_user&edit_user_id={$user_id}'> Edit </a></td>";
-                echo "<td><a href='./users.php?delete_user_id={$user_id}'> Delete </a></td>";
+                    if($user_role === 'Admin') {
+                        echo "<td class='align-right'><a class='btn btn-warning btn-sm' href='./users.php?change_to_subscriber={$user_id}'> Subscriber </a></td>";
+                    } else {
+                        echo "<td class='align-right'><a class='btn btn-warning btn-sm' href='./users.php?change_to_admin={$user_id}'> Admin </a></td>";
+                    }
+                    echo "<td class='align-center'><a class='btn btn-success btn-sm' href='./users.php?source=edit_user&edit_user_id={$user_id}'> Edit </a></td>";
+                echo "<td><a class='btn btn-danger btn-sm' href='./users.php?delete_user_id={$user_id}'> Delete </a></td>";
                 echo "</tr>";
             }
         }
