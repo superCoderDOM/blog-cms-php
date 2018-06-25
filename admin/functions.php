@@ -614,7 +614,6 @@
                     echo "<td><a class='btn btn-info btn-sm' href='../post.php?post_id={$post_id}'> View </a></td>";
                     echo "<td><a class='btn btn-success btn-sm' href='./posts.php?source=edit_post&edit_post_id={$post_id}'> Edit </a></td>";
                     echo "<td><a post_id='{$post_id}' href='javascript:void(0)' class='btn btn-danger btn-sm delete_link'> Delete </a></td>";
-                    // echo "<td><a href='./posts.php?delete_post_id={$post_id}' onClick=\"javascript: return confirm('Are you sure you want to DELETE this post?');\"> Delete </a></td>";
                     echo "<td><a class='btn btn-warning btn-sm' href='./posts.php?reset_post_id={$post_id}'> Reset </a></td>";
                 echo "</tr>";
             }
@@ -682,7 +681,6 @@
                     echo "<td><a class='btn btn-info btn-sm' href='../post.php?post_id={$post_id}'> View </a></td>";
                     echo "<td><a class='btn btn-success btn-sm' href='./posts.php?source=edit_post&edit_post_id={$post_id}'> Edit </a></td>";
                     echo "<td><a post_id='{$post_id}' author_id={$post_author_id} href='javascript:void(0)' class='btn btn-danger btn-sm delete_link'> Delete </a></td>";
-                    // echo "<td><a href='./posts.php?delete_post_id={$post_id}&author_id={$post_author_id}' onClick=\"javascript: return confirm('Are you sure you want to DELETE this post?');\"> Delete </a></td>";
                     echo "<td><a class='btn btn-warning btn-sm' href='./posts.php?reset_post_id={$post_id}&author_id={$post_author_id}'> Reset </a></td>";
                 echo "</tr>";
             }
@@ -1018,7 +1016,7 @@
                         echo "<td class='align-right'><a class='btn btn-warning btn-sm' href='./users.php?change_to_admin={$user_id}'> Admin </a></td>";
                     }
                     echo "<td class='align-center'><a class='btn btn-success btn-sm' href='./users.php?source=edit_user&edit_user_id={$user_id}'> Edit </a></td>";
-                echo "<td><a class='btn btn-danger btn-sm' href='./users.php?delete_user_id={$user_id}'> Delete </a></td>";
+                    echo "<td><a user_id='{$user_id}' username='{$username}' href='javascript:void(0)' class='btn btn-danger btn-sm delete_link'> Delete </a></td>";
                 echo "</tr>";
             }
         }
@@ -1130,11 +1128,11 @@
 
         global $connection;
 
-        if(isset($_GET['delete_user_id'])) {
+        if(isset($_POST['delete_user'])) {
 
             if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
 
-                $user_id = escape($_GET['delete_user_id']);
+                $user_id = escape($_POST['user_id']);
                 $query = "DELETE FROM users WHERE user_id = {$user_id}";
                 $deleteUserByID = mysqli_query($connection, $query);
                 confirmQuery($deleteUserByID);

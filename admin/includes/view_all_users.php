@@ -1,4 +1,7 @@
 <?php 
+
+    include "./includes/delete_user_modal.php";
+
     if(!userIsAdmin($_SESSION['user_id'])) {
 
         header("Location: index.php");
@@ -25,3 +28,18 @@
         <?php deleteUser(); ?>
     </tbody>
 </table>
+
+<script src="./js/jquery.js"></script>
+
+<script>
+    $(document).ready(function(){
+        $(".delete_link").on("click", function(){
+
+            var user_id = $(this).attr("user_id");
+            var username = $(this).attr("username");
+            $(".modal_delete_username").html(username);
+            $("#modal_delete_user_id").attr("value", user_id);
+            $("#myModal").modal("show");
+        });
+    });
+</script>
