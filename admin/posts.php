@@ -1,4 +1,9 @@
-<?php include './includes/admin_header.php'; ?>
+<?php 
+    include './includes/admin_header.php';
+    if($_SESSION['user_role'] !== 'Admin') {
+        redirect('./profile.php');
+    }
+?>
 
 <!DOCTYPE html>
 <html lang="en">
