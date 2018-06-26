@@ -54,11 +54,15 @@
 
                     } else {
 
-                        $reg_class = '';
+                        $regist_class = '';
+                        $login_class = '';
                         if($pageName === 'registration.php') {
-                            $reg_class = 'active';
+                            $regist_class = 'active';
+                        } elseif($pageName === 'login.php') {
+                            $login_class = 'active';
                         }
-                        echo "<li class='{$reg_class}'><a href='./registration.php'> Register </a></li>";
+                        echo "<li class='{$regist_class}'><a href='./registration.php'> Register </a></li>";
+                        echo "<li class='{$login_class}'><a href='./login.php'> Login </a></li>";
                     }
 
                     if(isset($_SESSION['user_id'])) {

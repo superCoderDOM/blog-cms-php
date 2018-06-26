@@ -1,15 +1,26 @@
 <?php 
 
-    require __DIR__ . '/vendor/autoload.php';
+    require './vendor/autoload.php';
 
 
-    $dotenv = new Dotenv\Dotenv(__DIR__);
+    $dotenv = new Dotenv\Dotenv('./');
     $dotenv->load();
     $dotenv->required(['DB_HOST', 'DB_DATABASE', 'DB_USERNAME', 'DB_PASSWORD']);
 
+    include './includes/db.php';
+    include './admin/functions.php';
+
     session_start();
 
-    include "./admin/functions.php";
+    checkIfUserIsLoggedInAndRedirect('./admin/index.php');
+
+    if(ifItIsMethod('post') && isset($_POST['login']) && isset($_POST['user_email']) && isset($_POST['user_password'])) {
+
+        $user_email = escape($_POST['user_email']);
+        $user_password = escape($_POST['user_password']);
+
+        logUserIn($user_email, $user_password);
+    }
 ?>
 
 <!DOCTYPE html>
@@ -17,10 +28,10 @@
 
 <head>
 
-    <meta name="description" content="Blog landing page">
+    <meta name="description" content="Sign in form">
     <meta name="author" content="Dominic Lacroix">
 
-    <title>Blog - Home</title>
+    <title>Blog - Login</title>
 
     <?php include "./includes/header_meta_link.php"?>
 
@@ -33,13 +44,7 @@
     <!-- Page Content -->
     <div class="container">
 
-        <div class="row">
-
-            <?php include './includes/content.php'; ?>
-            <?php include './includes/sidebar.php'; ?>
-
-        </div>
-        <!-- /.row -->
+        <?php include './includes/login.php'; ?>
 
         <hr>
 

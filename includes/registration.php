@@ -1,11 +1,11 @@
-<section id="login">
+<section id="registration">
     <div class="container">
         <div class="row">
             <div class="col-xs-6 col-xs-offset-3">
                 <div class="form-wrap">
                     <h1>Register</h1>
                     <?php $errors = registerUser() ?>
-                    <form role="form" action="" method="post" id="login-form" autocomplete="on">
+                    <form role="form" action="" method="post" id="registration-form" autocomplete="on">
                         <div class="form-group">
                             <label for="username" class="sr-only">username</label>
                             <input type="text" name="username" id="username" class="form-control" 

@@ -3,11 +3,12 @@
 
     <?php 
         if(!isset($_SESSION['user_id'])) {
+
             ?>
             <!-- Blog Login Well -->
             <div class="well">
                 <h4>Sign In</h4>
-                <form action="./includes/login.php" method="post">
+                <form action="./login.php" method="post">
                     <div class="form-group">
                         <input type="email" name="user_email" class="form-control" placeholder="Enter your email">
                     </div>

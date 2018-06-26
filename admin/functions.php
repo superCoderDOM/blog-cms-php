@@ -162,6 +162,32 @@
     function redirect($location) {
 
         header("Location: " . $location);
+        exit;
+    }
+
+    function ifItIsMethod($method=null) {
+
+        if($_SERVER['REQUEST_METHOD'] == strtoupper($method)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function isLoggedIn() {
+
+        if(isset($_SESSION['user_role'])) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function checkIfUserIsLoggedInAndRedirect($location) {
+
+        if(isLoggedIn()) {
+            redirect($location);
+        }
     }
 
     /*----------------------------------+
@@ -175,7 +201,7 @@
 
         if(isset($_POST['create_category'])) {
 
-            if(isset($_SESSION['user_role']) && ($_SESSION['user_role'] == 'Admin' || $_SESSION['user_role'] == 'Contributor')) {
+            if(isset($_SESSION['user_role']) && ($_SESSION['user_role'] === 'Admin' || $_SESSION['user_role'] === 'Contributor')) {
 
                 $cat_title = escape($_POST['cat_title']);
 
@@ -205,7 +231,7 @@
 
         global $connection;
 
-        if(isset($_SESSION['user_role']) && ($_SESSION['user_role'] == 'Admin' || $_SESSION['user_role'] == 'Contributor')) {
+        if(isset($_SESSION['user_role']) && ($_SESSION['user_role'] === 'Admin' || $_SESSION['user_role'] === 'Contributor')) {
 
             $query = "SELECT * FROM categories";
             $allCategories = mysqli_query($connection, $query);
@@ -233,7 +259,7 @@
 
         if(isset($_POST['update_category'])) {
 
-            if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
+            if(isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'Admin') {
 
                 $cat_id = escape($cat_id);
                 $cat_title = escape($_POST['cat_title']);
@@ -242,9 +268,9 @@
                 // $query .= "WHERE cat_id = '{$cat_id}'";
                 // $updateCategoryByID = mysqli_query($connection, $query);
                 $updateCategoryByID = mysqli_prepare($connection, "UPDATE categories SET cat_title = ? WHERE cat_id = ?");
+                confirmQuery($updateCategoryByID);
                 mysqli_stmt_bind_param($updateCategoryByID, "si", $cat_title, $cat_id);
                 mysqli_stmt_execute($updateCategoryByID);
-                confirmQuery($updateCategoryByID);
                 mysqli_stmt_close($updateCategoryByID);
                 redirect("./categories.php");
             }
@@ -258,7 +284,7 @@
 
         if(isset($_GET['delete_cat_id'])) {
 
-            if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
+            if(isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'Admin') {
 
                 $cat_id = escape($_GET['delete_cat_id']);
 
@@ -281,7 +307,7 @@
 
         if(isset($_POST['submit_comment'])) {
 
-            if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
+            if(isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'Admin') {
 
                 $comment_post_id = escape($_GET['comment_post_id']);
                 $comment_author = escape($_POST['comment_author']);
@@ -310,7 +336,7 @@
 
         global $connection;
 
-        if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
+        if(isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'Admin') {
 
             $query = "SELECT * FROM comments ORDER BY comment_id DESC";
             $selectAllComments = mysqli_query($connection, $query);
@@ -355,7 +381,7 @@
 
         global $connection;
 
-        if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
+        if(isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'Admin') {
 
             $post_id = escape($post_id);
 
@@ -407,7 +433,7 @@
 
         if(isset($_GET['approve_comment_id']) || isset($_GET['reject_comment_id'])) {
 
-            if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
+            if(isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'Admin') {
 
                 if(isset($_GET['approve_comment_id'])) {
 
@@ -446,7 +472,7 @@
 
         if(isset($_GET['delete_comment_id'])) {
 
-            if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
+            if(isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'Admin') {
 
                 $comment_id = escape($_GET['delete_comment_id']);
                 $query = "DELETE FROM comments WHERE comment_id = {$comment_id}";
@@ -477,7 +503,7 @@
 
         if(isset($_POST['create_post'])) {
 
-            if(isset($_SESSION['user_role']) && ($_SESSION['user_role'] == 'Admin' || $_SESSION['user_role'] == 'Contributor')) {
+            if(isset($_SESSION['user_role']) && ($_SESSION['user_role'] === 'Admin' || $_SESSION['user_role'] === 'Contributor')) {
             
                 $post_title = escape($_POST['post_title']);
                 $post_category_id = escape($_POST['post_category_id']);
@@ -508,7 +534,7 @@
 
         global $connection;
 
-        if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
+        if(isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'Admin') {
 
             $post_id = escape($post_id);
 
@@ -556,7 +582,7 @@
 
         global $connection;
 
-        if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
+        if(isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'Admin') {
 
             // $query = "SELECT * FROM posts ORDER BY post_id DESC";
             $query = "SELECT posts.post_id, posts.post_title, posts.post_author_id, posts.post_date, posts.post_image, posts.post_content, posts.post_tags, posts.post_view_count, posts.post_status, ";
@@ -629,7 +655,7 @@
 
         global $connection;
 
-        if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
+        if(isset($_SESSION['user_role']) && ($_SESSION['user_role'] === 'Admin' || $_SESSION['user_role'] === 'Contributor')) {
 
             $post_author_id = escape($post_author_id);
 
@@ -701,7 +727,7 @@
 
         if(isset($_POST['update_post'])) {
 
-            if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
+            if(isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'Admin') {
 
                 $post_title = escape($_POST['post_title']);
                 $post_category_id = escape($_POST['post_category_id']);
@@ -747,7 +773,7 @@
 
         global $connection;
 
-        if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
+        if(isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'Admin') {
 
             $post_id = escape($post_id);
             $post_status = escape($post_status);
@@ -773,7 +799,7 @@
 
         if(isset($_GET['reset_post_id'])) {
 
-            if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
+            if(isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'Admin') {
 
                 $post_id = escape($_GET['reset_post_id']);
 
@@ -800,7 +826,7 @@
 
         if(isset($_POST['delete_post'])) {
 
-            if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
+            if(isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'Admin') {
 
                 $post_id = escape($_POST['post_id']);
 
@@ -824,7 +850,7 @@
 
         global $connection;
 
-        if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
+        if(isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'Admin') {
 
             $post_id = escape($post_id);
 
@@ -854,7 +880,7 @@
 
         if(isset($_POST['create_user'])) {
 
-            if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
+            if(isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'Admin') {
 
                 $username = escape($_POST['username']);
                 $user_firstname = escape($_POST['user_firstname']);
@@ -979,11 +1005,14 @@
                 // $_SESSION['user_email'] = $row['user_email'];
                 $_SESSION['user_role'] = $row['user_role'];
 
-                redirect("../admin/index.php");  // redirects to CMS Administration Dashboard
+                if($row['user_role'] === "Admin") {
 
-            } else {
+                    redirect("../admin/index.php");
 
-                redirect("../index.php");  // redirects to Homepage
+                } else {
+
+                    redirect("../index.php");
+                }
             }
         }
     }
@@ -993,7 +1022,7 @@
 
         global $connection;
 
-        if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
+        if(isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'Admin') {
 
             $query = "SELECT * FROM users";
             $selectAllUsers = mysqli_query($connection, $query);
@@ -1034,7 +1063,7 @@
 
         if(isset($_POST['update_user'])) {
 
-            // if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
+            // if(isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'Admin') {
             if(isset($_SESSION['user_role'])) {
 
                 $username = escape($_POST['username']);
@@ -1106,7 +1135,7 @@
 
         if(isset($_GET['change_to_admin']) || isset($_GET['change_to_subscriber'])) {
 
-            if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
+            if(isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'Admin') {
 
 
                 if(isset($_GET['change_to_admin'])) {
@@ -1135,7 +1164,7 @@
 
         if(isset($_POST['delete_user'])) {
 
-            if(isset($_SESSION['user_role']) && $_SESSION['user_role'] == 'Admin') {
+            if(isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'Admin') {
 
                 $user_id = escape($_POST['user_id']);
                 $query = "DELETE FROM users WHERE user_id = {$user_id}";

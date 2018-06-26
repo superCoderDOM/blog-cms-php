@@ -7,11 +7,7 @@
         $query = "SELECT * FROM posts WHERE post_status = 'Published'";
     }
     $fetchAllPosts = mysqli_query($connection, $query);
-    if(!$fetchAllPosts) {
-
-        die("QUERY FAILED: " . mysqli_error($connection));
-
-    } else {
+    if(confirmQuery($fetchAllPosts)) {
 
         $postCount = mysqli_num_rows($fetchAllPosts);
         $pages = ceil($postCount / $postsPerPage);
@@ -45,12 +41,8 @@
                     LIMIT $firstPost, $postsPerPage";
             }
             $fetchPostRange = mysqli_query($connection, $query);
-            if(!$fetchPostRange) {
-    
-                die("QUERY FAILED: " . mysqli_error($connection));
-    
-            } else {
-    
+            if(confirmQuery($fetchPostRange)) {
+
                 while($row = mysqli_fetch_assoc($fetchPostRange)) {
     
                     $post_id = $row['post_id'];
