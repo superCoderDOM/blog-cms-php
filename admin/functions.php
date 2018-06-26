@@ -1056,13 +1056,19 @@
                     echo "<td> {$user_firstname} </td>";
                     echo "<td> {$user_lastname} </td>";
                     echo "<td> {$user_email} </td>";
-                    echo "<td> {$user_role} </td>";
-                    if($user_role === 'Admin') {
-                        echo "<td class='align-right'><a class='btn btn-warning btn-sm' href='./users.php?change_to_subscriber={$user_id}'> Subscriber </a></td>";
-                    } else {
-                        echo "<td class='align-right'><a class='btn btn-warning btn-sm' href='./users.php?change_to_admin={$user_id}'> Admin </a></td>";
-                    }
-                    echo "<td class='align-center'><a class='btn btn-success btn-sm' href='./users.php?source=edit_user&edit_user_id={$user_id}'> Edit </a></td>";
+                    echo "<td><div class='btn-group'>
+                            <button type='button' class='btn btn-warning btn-sm'> {$user_role} </button>
+                            <button type='button' class='btn btn-warning btn-sm dropdown-toggle' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+                                <span class='caret'></span>
+                                <span class='sr-only'>Toggle Dropdown</span>
+                            </button>
+                            <ul class='dropdown-menu'>
+                                <li><a href='./users.php?change_to_subscriber={$user_id}'> Subscriber </a></li>
+                                <li><a href='./users.php?change_to_contributor={$user_id}'> Contributor </a></li>
+                                <li><a href='./users.php?change_to_admin={$user_id}'> Admin </a></li>
+                            </ul>
+                        </div></td>";
+                    echo "<td><a class='btn btn-success btn-sm' href='./users.php?source=edit_user&edit_user_id={$user_id}'> Edit </a></td>";
                     echo "<td><a user_id='{$user_id}' username='{$username}' href='javascript:void(0)' class='btn btn-danger btn-sm delete_link'> Delete </a></td>";
                 echo "</tr>";
             }
@@ -1146,7 +1152,7 @@
 
         global $connection;
 
-        if(isset($_GET['change_to_admin']) || isset($_GET['change_to_subscriber'])) {
+        if(isset($_GET['change_to_admin']) || isset($_GET['change_to_contributor']) || isset($_GET['change_to_subscriber'])) {
 
             if(isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'Admin') {
 
@@ -1155,6 +1161,11 @@
 
                     $user_id = escape($_GET['change_to_admin']);
                     $user_role = 'Admin';
+
+                } elseif(isset($_GET['change_to_contributor'])) {
+
+                    $user_id = escape($_GET['change_to_contributor']);
+                    $user_role = 'Contributor';
 
                 } elseif(isset($_GET['change_to_subscriber'])) {
 

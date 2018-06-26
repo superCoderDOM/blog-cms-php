@@ -25,6 +25,7 @@
         <label for="user_role">Role</label>
         <select name="user_role" id="user_role" class="form-control">
             <option value='Subscriber' selected> Subscriber </option>
+            <option value='Admin'> Contributor </option>
             <option value='Admin'> Admin </option>
         </select>
     </div>
