@@ -17,9 +17,13 @@
                     </li>
                 </ul>
             </li>
-            <li>
-                <a href="./comments.php"><i class="fa fa-fw fa-comments"></i> Comments </a>
-            </li>
+
+            <?php if($_SESSION['user_role'] === 'Admin'): ?>
+                <li>
+                    <a href="./comments.php"><i class="fa fa-fw fa-comments"></i> Comments </a>
+                </li>
+            <?php endif; ?>
+
             <li>
                 <a href="./categories.php"><i class="fa fa-fw fa-list"></i> Categories </a>
             </li>

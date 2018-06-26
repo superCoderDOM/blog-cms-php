@@ -4,7 +4,7 @@
 
         $post_id = mysqli_real_escape_string($connection, $_GET['post_id']);
 
-    $query = "UPDATE posts SET post_view_count = post_view_count + 1 WHERE post_id = {$post_id}";
+        $query = "UPDATE posts SET post_view_count = post_view_count + 1 WHERE post_id = {$post_id}";
         $updatePostViewCount = mysqli_query($connection, $query);
         if(!$updatePostViewCount) {
 
@@ -49,7 +49,7 @@
         
                         <?php
         
-                            if($post_status === 'Published' || (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'Admin')) {
+                            if($post_status === 'Published' || (isset($_SESSION['user_role']) && ($_SESSION['user_role'] === 'Admin' || ($_SESSION['user_role'] === 'Contributor' && $_SESSION['user_id'] === $post_author_id)))) {
 
                                 ?>
             

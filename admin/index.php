@@ -1,6 +1,6 @@
 <?php 
     include './includes/admin_header.php';
-    if($_SESSION['user_role'] !== 'Admin') {
+    if($_SESSION['user_role'] !== 'Admin' && $_SESSION['user_role'] !== 'Contributor') {
         redirect('./profile.php');
     }
 ?>

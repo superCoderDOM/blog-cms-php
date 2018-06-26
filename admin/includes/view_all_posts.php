@@ -35,20 +35,22 @@
 <form action="" method="post">
     <table class="table table-bordered table-hover">
 
-        <div class="col-xs-4" id="bulkOptionContainer">
-            <select class="form-control" name="bulk_option" id="bulk_option">
-                <option value="">Select Option</option>
-                <option value="Published">Publish</option>
-                <option value="Draft">Draft</option>
-                <option value="Delete">Delete</option>
-                <option value="Clone">Clone</option>
-            </select>
-        </div>
+        <?php if($_SESSION['user_role'] === 'Admin'): ?>
+            <div class="col-xs-4" id="bulkOptionContainer">
+                <select class="form-control" name="bulk_option" id="bulk_option">
+                    <option value="">Select Option</option>
+                    <option value="Published">Publish</option>
+                    <option value="Draft">Draft</option>
+                    <option value="Delete">Delete</option>
+                    <option value="Clone">Clone</option>
+                </select>
+            </div>
 
-        <div class="col-xs-4">
-            <input type="submit" class="btn btn-success" name="submit_bulk_option" value="Apply">
-            <a class="btn btn-primary" href="./posts.php?source=add_post">Add New</a>
-        </div>
+            <div class="col-xs-4">
+                <input type="submit" class="btn btn-success" name="submit_bulk_option" value="Apply">
+                <a class="btn btn-primary" href="./posts.php?source=add_post">Add New</a>
+            </div>
+        <?php endif; ?>
 
         <thead class="thead-dark">
             <tr>
@@ -75,6 +77,10 @@
 
                     $author_id = escape($_GET['author_id']);
                     fetchPostsByAuthorID($author_id);
+
+                } elseif($_SESSION['user_role'] !== 'Admin') {
+
+                    fetchPostsByAuthorID($_SESSION['user_id']);
 
                 } else {
 

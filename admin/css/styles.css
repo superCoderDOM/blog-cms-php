@@ -6,6 +6,10 @@
     text-align: right;
 }
 
+.text-slategrey {
+    color: slategrey;
+}
+
 #load-screen {
     background: url(../images/header-back.png);
     position: fixed;

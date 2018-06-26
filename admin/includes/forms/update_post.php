@@ -58,23 +58,31 @@
                     <label for="post_author_id">Post Author</label>
                     <select name="post_author_id" id="post_author_id" class="form-control">
                         <?php 
-                            $query = "SELECT * FROM users";
-                            $allUsers = mysqli_query($connection, $query);
-                            confirmQuery($allUsers);
+                            if($_SESSION['user_role'] === 'Admin') {
 
-                            while($row = mysqli_fetch_assoc($allUsers)) {
-
-                                $user_id = $row['user_id'];
-                                $user_firstname = $row['user_firstname'];
-                                $user_lastname = $row['user_lastname'];
-
-                                if($user_id === $post_author_id) {
-                                    $author_selected = 'selected';
-                                } else {
-                                    $author_selected = '';
+                                $query = "SELECT * FROM users";
+                                $allUsers = mysqli_query($connection, $query);
+                                confirmQuery($allUsers);
+                
+                                while($row = mysqli_fetch_assoc($allUsers)) {
+                
+                                    $user_id = $row['user_id'];
+                                    $user_firstname = $row['user_firstname'];
+                                    $user_lastname = $row['user_lastname'];
+                
+                                    if($user_id == $_SESSION['user_id']) {
+                                        $user_selected = 'selected';
+                                    } else {
+                                        $user_selected = '';
+                                    }
+                
+                                    echo "<option value='{$user_id}' {$user_selected}>{$user_firstname} {$user_lastname}</option>";
                                 }
 
-                                echo "<option value='{$user_id}' {$author_selected}>{$user_firstname} {$user_lastname}</option>";
+                            } else {
+
+                                echo "<option value='{$_SESSION['user_id']}' selected>{$_SESSION['user_firstname']} {$_SESSION['user_lastname']}</option>";
+
                             }
                         ?>
                     </select>

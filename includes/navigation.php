@@ -41,7 +41,7 @@
 
                     if(isset($_SESSION['user_role'])) {
 
-                        if($_SESSION['user_role'] === 'Admin') {
+                        if($_SESSION['user_role'] === 'Admin' || $_SESSION['user_role'] === 'Contributor') {
 
                             echo "<li><a href='./admin/index.php'> Admin </a></li>";
 

@@ -245,8 +245,16 @@
                 echo "<tr>";
                     echo "<td> {$cat_id} </td>";
                     echo "<td> {$cat_title} </td>";
-                    echo "<td><a href='./categories.php?delete_cat_id={$cat_id}'>Delete</a></td>";
-                    echo "<td><a href='./categories.php?update_cat_id={$cat_id}'>Edit</a></td>";
+                    if($_SESSION['user_role'] === 'Admin') {
+
+                        echo "<td><a href='./categories.php?delete_cat_id={$cat_id}'> Delete </a></td>";
+                        echo "<td><a href='./categories.php?update_cat_id={$cat_id}'> Edit </a></td>";
+
+                    } else {
+
+                        echo "<td class='text-slategrey'> Delete </td>";
+                        echo "<td class='text-slategrey'> Edit </td>";
+                    }
                 echo "</tr>";
             }
         }
@@ -307,26 +315,23 @@
 
         if(isset($_POST['submit_comment'])) {
 
-            if(isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'Admin') {
+            $comment_post_id = escape($_GET['comment_post_id']);
+            $comment_author = escape($_POST['comment_author']);
+            $comment_email = escape($_POST['comment_email']);
+            $comment_content = escape($_POST['comment_content']);
 
-                $comment_post_id = escape($_GET['comment_post_id']);
-                $comment_author = escape($_POST['comment_author']);
-                $comment_email = escape($_POST['comment_email']);
-                $comment_content = escape($_POST['comment_content']);
+            if(!empty($comment_author) && !empty($comment_email) && !empty($comment_content)) {
 
-                if(!empty($comment_author) && !empty($comment_email) && !empty($comment_content)) {
+                $query = "INSERT INTO comments(comment_post_id, comment_author, comment_email, comment_content) ";
+                $query .= "VALUES('{$comment_post_id}', '{$comment_author}', '{$comment_email}', '{$comment_content}')";
 
-                    $query = "INSERT INTO comments(comment_post_id, comment_author, comment_email, comment_content) ";
-                    $query .= "VALUES('{$comment_post_id}', '{$comment_author}', '{$comment_email}', '{$comment_content}')";
+                $addComment = mysqli_query($connection, $query);
+                confirmQuery($addcomment);
+                redirect("./posts.php?post_id={$comment_post_id}");
 
-                    $addComment = mysqli_query($connection, $query);
-                    confirmQuery($addcomment);
-                    redirect("./posts.php?post_id={$comment_post_id}");
+            } else {
 
-                } else {
-
-                    echo "<script>alert('Fields cannot be empty')</script>";
-                }
+                echo "<script>alert('Fields cannot be empty')</script>";
             }
         }
     }
@@ -711,8 +716,16 @@
                     echo "<td> {$post_date} </td>";
                     echo "<td><a class='btn btn-info btn-sm' href='../post.php?post_id={$post_id}'> View </a></td>";
                     echo "<td><a class='btn btn-success btn-sm' href='./posts.php?source=edit_post&edit_post_id={$post_id}'> Edit </a></td>";
-                    echo "<td><a post_id='{$post_id}' author_id={$post_author_id} href='javascript:void(0)' class='btn btn-danger btn-sm delete_link'> Delete </a></td>";
-                    echo "<td><a class='btn btn-warning btn-sm' href='./posts.php?reset_post_id={$post_id}&author_id={$post_author_id}'> Reset </a></td>";
+                    if($_SESSION['user_role'] === 'Admin') {
+
+                        echo "<td><a post_id='{$post_id}' author_id={$post_author_id} href='javascript:void(0)' class='btn btn-danger btn-sm delete_link'> Delete </a></td>";
+                        echo "<td><a class='btn btn-warning btn-sm' href='./posts.php?reset_post_id={$post_id}&author_id={$post_author_id}'> Reset </a></td>";
+
+                    } else {
+
+                        echo "<td><span class='btn btn-default btn-sm'> Delete </span></td>";
+                        echo "<td><span class='btn btn-default btn-sm'> Reset </span></td>";
+                    }
                 echo "</tr>";
             }
         }
@@ -727,7 +740,7 @@
 
         if(isset($_POST['update_post'])) {
 
-            if(isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'Admin') {
+            if(isset($_SESSION['user_role']) && ($_SESSION['user_role'] === 'Admin' || $_SESSION['user_role'] === 'Contributor')) {
 
                 $post_title = escape($_POST['post_title']);
                 $post_category_id = escape($_POST['post_category_id']);
