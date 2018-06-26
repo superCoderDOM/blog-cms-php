@@ -6,7 +6,10 @@
 
     $dotenv = new Dotenv\Dotenv('./');
     $dotenv->load();
-    $dotenv->required(['DB_HOST', 'DB_DATABASE', 'DB_USERNAME', 'DB_PASSWORD']);
+    $dotenv->required([
+        'DB_HOST', 'DB_DATABASE', 'DB_USERNAME', 'DB_PASSWORD', 
+        'SMTP_HOST', 'SMTP_PORT', 'SMTP_USER', 'SMTP_PASSWORD'
+        ]);
 
     include './includes/db.php';
     include './admin/functions.php';
@@ -62,12 +65,12 @@
             try {
                 //Server settings
                 $mail->isSMTP();
-                $mail->Host = Config::SMTP_HOST;
+                $mail->Host = $_ENV['SMTP_HOST'];
                 $mail->SMTPAuth = true;
-                $mail->Username = Config::SMTP_USER;
-                $mail->Password = Config::SMTP_PASSWORD;
+                $mail->Username = $_ENV['SMTP_USER'];
+                $mail->Password = $_ENV['SMTP_PASSWORD'];
                 $mail->SMTPSecure = 'tls';
-                $mail->Port = Config::SMTP_PORT;
+                $mail->Port = $_ENV['SMTP_PORT'];
             
                 //Recipients
                 $mail->setFrom('superCoderDOM@gmail.com', 'Dominic Lacroix');
